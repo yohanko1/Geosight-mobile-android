@@ -3,6 +3,7 @@ package edu.illinois.geosight;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 
 public class GPSLocationListener implements LocationListener {
 	protected Location lastLocation;
@@ -17,6 +18,7 @@ public class GPSLocationListener implements LocationListener {
 	
 	@Override
 	public void onLocationChanged(Location loc) {
+		Log.v("GPS", "Got a GPS coordinate");
 		lastLocation = loc;
 	}
 
