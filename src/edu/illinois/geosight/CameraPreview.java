@@ -16,6 +16,8 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -29,10 +31,15 @@ import android.view.View.OnClickListener;
  */
 public class CameraPreview extends Activity {
 	private Preview mPreview;
-
+	private GPSLocationListener mListener;
+	private LocationManager mManager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+			
+		mListener = new GPSLocationListener();
+		mManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
 		// Hide the window title.
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -43,25 +50,31 @@ public class CameraPreview extends Activity {
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new Preview(this);
-
+		
+		
 		// camera call-back
 		mPreview.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				takePic();
 			}
-
-
 		});
 
 		setContentView(mPreview);
 	}
 	
+
 	private void takePic() {
-		mPreview.mParam.setGpsLatitude(88.00);
-		mPreview.mParam.setGpsLongitude(13.92);
-		mPreview.mCamera.setParameters(mPreview.mParam);
-		mPreview.mCamera.takePicture(null, null, mPicCallBack);
+		final Location currentLocation = mListener.getLastLocation();
+		if( currentLocation != null ){
+			mPreview.mParam.setGpsLatitude( currentLocation.getLatitude() );
+			mPreview.mParam.setGpsLongitude( currentLocation.getLongitude() );
+			mPreview.mParam.setGpsAltitude( currentLocation.getAltitude() );
+			mPreview.mParam.setGpsTimestamp(currentLocation.getTime() );
+			
+			mPreview.mCamera.setParameters(mPreview.mParam);
+			mPreview.mCamera.takePicture(null, null, mPicCallBack);
+		}
 	}
 	
 	BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -74,12 +87,17 @@ public class CameraPreview extends Activity {
 	
 	protected void onResume() {
 		super.onResume();
+		
+		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 5.0f, mListener);
 		IntentFilter filter = new IntentFilter("android.intent.action.CAMERA_BUTTON");
 		this.registerReceiver(receiver, filter);
 	}
 
 	protected void onPause() {
 		super.onPause();
+		mManager.removeUpdates(mListener);
+		mListener.clearLocation();
+		
 		this.unregisterReceiver(receiver);
 	}
 
