@@ -11,6 +11,10 @@ public class GPSLocationListener implements LocationListener {
 		return lastLocation;
 	}
 	
+	public void clearLocation(){
+		lastLocation = null;
+	}
+	
 	@Override
 	public void onLocationChanged(Location loc) {
 		lastLocation = loc;

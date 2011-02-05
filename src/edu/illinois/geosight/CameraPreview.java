@@ -96,6 +96,8 @@ public class CameraPreview extends Activity {
 	protected void onPause() {
 		super.onPause();
 		mManager.removeUpdates(mListener);
+		mListener.clearLocation();
+		
 		this.unregisterReceiver(receiver);
 	}
 
