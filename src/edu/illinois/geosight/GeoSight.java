@@ -22,7 +22,7 @@ public class GeoSight extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 
-		Intent cameraPreviewIntent = new Intent(this, CameraPreview.class);
+		Intent cameraPreviewIntent = new Intent(this, CameraActivity.class);
 		startActivity(cameraPreviewIntent);
 	}
 }

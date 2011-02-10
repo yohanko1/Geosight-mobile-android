@@ -29,7 +29,7 @@ import android.view.View.OnClickListener;
 /**
  * This class is the activity for taking a picture using the camera.
  */
-public class CameraPreview extends Activity {
+public class CameraActivity extends Activity {
 	private Preview mPreview;
 	private GPSLocationListener mListener;
 	private LocationManager mManager;
