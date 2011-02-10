@@ -10,6 +10,8 @@ import android.widget.Button;
 public class GeoSight extends Activity implements OnClickListener {
 	
 	private Button cameraPreview;
+	private Button mapButton;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -18,11 +20,21 @@ public class GeoSight extends Activity implements OnClickListener {
         
         cameraPreview = (Button) findViewById(R.id.CameraPreview);
         cameraPreview.setOnClickListener(this);
+        
+        mapButton = (Button) findViewById(R.id.MapButton);
+        mapButton.setOnClickListener(this);
     }
 	@Override
 	public void onClick(View v) {
+		Intent intent = null;
+		
+		if( v.getId() == R.id.CameraPreview){
+			intent = new Intent(this, CameraActivity.class);
 
-		Intent cameraPreviewIntent = new Intent(this, CameraActivity.class);
-		startActivity(cameraPreviewIntent);
+		} else if( v.getId() == R.id.MapButton ){
+			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
+		}
+		
+		startActivity(intent);
 	}
 }
