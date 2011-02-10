@@ -16,6 +16,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -31,8 +32,15 @@ import android.view.View.OnClickListener;
  */
 public class CameraActivity extends Activity {
 	private Preview mPreview;
+	
+	
 	private GPSLocationListener mListener;
 	private LocationManager mManager;
+	private String mBestProvider;
+	
+	public Camera getCamera(){
+		return mPreview.mCamera;
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +48,9 @@ public class CameraActivity extends Activity {
 			
 		mListener = new GPSLocationListener();
 		mManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-
+		Criteria criteria = new Criteria();
+		mBestProvider = mManager.getBestProvider(criteria, false);
+		
 		// Hide the window title.
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		getWindow().setFormat(PixelFormat.TRANSLUCENT);
@@ -50,6 +60,7 @@ public class CameraActivity extends Activity {
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new Preview(this);
+		
 		
 		
 		// camera call-back
@@ -63,67 +74,28 @@ public class CameraActivity extends Activity {
 		setContentView(mPreview);
 	}
 	
-
-	private void takePic() {
-		final Location currentLocation = mListener.getLastLocation();
-		if( currentLocation != null ){
-			mPreview.mParam.setGpsLatitude( currentLocation.getLatitude() );
-			mPreview.mParam.setGpsLongitude( currentLocation.getLongitude() );
-			mPreview.mParam.setGpsAltitude( currentLocation.getAltitude() );
-			mPreview.mParam.setGpsTimestamp(currentLocation.getTime() );
-			
-			mPreview.mCamera.setParameters(mPreview.mParam);
-			mPreview.mCamera.takePicture(null, null, mPicCallBack);
-		}
-	}
-	
-	BroadcastReceiver receiver = new BroadcastReceiver() {
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			takePic();
-		}
-	};
-	
 	protected void onResume() {
 		super.onResume();
-		
 		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 5.0f, mListener);
-		IntentFilter filter = new IntentFilter("android.intent.action.CAMERA_BUTTON");
-		this.registerReceiver(receiver, filter);
 	}
 
 	protected void onPause() {
 		super.onPause();
 		mManager.removeUpdates(mListener);
 		mListener.clearLocation();
-		
-		this.unregisterReceiver(receiver);
 	}
 
-	PictureCallback mPicCallBack = new PictureCallback() {
-		@Override
-		public void onPictureTaken(byte[] data, Camera camera) {
-			FileOutputStream outStream = null;
-			try {
-				String filePath = "/mnt/sdcard/dcim/Camera"
-						+ String.format("/%d.jpg", System.currentTimeMillis());
-				outStream = new FileOutputStream(filePath);
-				outStream.write(data);
-				outStream.close();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			setResult(RESULT_OK);
-
-			// go back immediately
-			finish();
-		}
-	};
+	private void takePic() {
+		Location currentLocation = mManager.getLastKnownLocation(mBestProvider);
+		mPreview.mParam.setGpsLatitude( currentLocation.getLatitude() );
+		mPreview.mParam.setGpsLongitude( currentLocation.getLongitude() );
+		mPreview.mParam.setGpsAltitude( currentLocation.getAltitude() );
+		mPreview.mParam.setGpsTimestamp( currentLocation.getTime() );
+		
+		CameraObject mCamObject = new CameraObject( getCamera() );
+		mCamObject.takePicture();
+		finish();
+	}
 }
 
 // ----------------------------------------------------------------------
