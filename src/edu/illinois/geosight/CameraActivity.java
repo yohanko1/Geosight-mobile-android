@@ -16,15 +16,16 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 
 /**
  * This class is the activity for taking a picture using the camera.
@@ -33,6 +34,7 @@ public class CameraActivity extends Activity {
 	private Preview mPreview;
 	private GPSLocationListener mListener;
 	private LocationManager mManager;
+	private String mBestProvider;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,9 @@ public class CameraActivity extends Activity {
 			
 		mListener = new GPSLocationListener();
 		mManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-
+		Criteria criteria = new Criteria();
+		mBestProvider = mManager.getBestProvider(criteria, false);
+		
 		// Hide the window title.
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		getWindow().setFormat(PixelFormat.TRANSLUCENT);
@@ -65,7 +69,7 @@ public class CameraActivity extends Activity {
 	
 
 	private void takePic() {
-		final Location currentLocation = mListener.getLastLocation();
+		final Location currentLocation = mManager.getLastKnownLocation(mBestProvider);
 		if( currentLocation != null ){
 			mPreview.mParam.setGpsLatitude( currentLocation.getLatitude() );
 			mPreview.mParam.setGpsLongitude( currentLocation.getLongitude() );
