@@ -12,8 +12,10 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name="CameraActivity">
-		</activity>
+		<activity android:name="CameraActivity"></activity>
+		<activity android:name="GoogleMapActivity" android:label="Map View"></activity>>
+		
+        <uses-library android:name="com.google.android.maps"/>
 	</application>
 
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
