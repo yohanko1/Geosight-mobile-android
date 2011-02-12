@@ -3,9 +3,11 @@ package edu.illinois.geosight;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.illinois.geosight.servercom.Sight;
 
 public class GeoSight extends Activity implements OnClickListener {
 	
@@ -23,6 +25,13 @@ public class GeoSight extends Activity implements OnClickListener {
         
         mapButton = (Button) findViewById(R.id.MapButton);
         mapButton.setOnClickListener(this);
+        
+        try {
+			Sight testSight = new Sight(1);
+			Log.v("JSON", testSight.getName() );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 	@Override
 	public void onClick(View v) {

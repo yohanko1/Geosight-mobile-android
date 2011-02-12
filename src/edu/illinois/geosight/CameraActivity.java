@@ -1,7 +1,5 @@
 package edu.illinois.geosight;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -14,7 +12,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.location.Criteria;
 import android.location.Location;
@@ -35,6 +32,7 @@ public class CameraActivity extends Activity {
 	private GPSLocationListener mListener;
 	private LocationManager mManager;
 	private String mBestProvider;
+	private CameraObject mCamObj;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +59,7 @@ public class CameraActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				takePic();
+				finish();
 			}
 		});
 
@@ -71,63 +70,30 @@ public class CameraActivity extends Activity {
 	private void takePic() {
 		final Location currentLocation = mManager.getLastKnownLocation(mBestProvider);
 		if( currentLocation != null ){
+			CameraObject camObj = new CameraObject(mPreview.mCamera);
+			
 			mPreview.mParam.setGpsLatitude( currentLocation.getLatitude() );
 			mPreview.mParam.setGpsLongitude( currentLocation.getLongitude() );
 			mPreview.mParam.setGpsAltitude( currentLocation.getAltitude() );
 			mPreview.mParam.setGpsTimestamp(currentLocation.getTime() );
 			
 			mPreview.mCamera.setParameters(mPreview.mParam);
-			mPreview.mCamera.takePicture(null, null, mPicCallBack);
+			mPreview.mCamera.takePicture(null, null, camObj.mPicCallBack);
 		}
 	}
-	
-	BroadcastReceiver receiver = new BroadcastReceiver() {
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			takePic();
-		}
-	};
 	
 	protected void onResume() {
 		super.onResume();
 		
 		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 5.0f, mListener);
 		IntentFilter filter = new IntentFilter("android.intent.action.CAMERA_BUTTON");
-		this.registerReceiver(receiver, filter);
 	}
 
 	protected void onPause() {
 		super.onPause();
 		mManager.removeUpdates(mListener);
 		mListener.clearLocation();
-		
-		this.unregisterReceiver(receiver);
 	}
-
-	PictureCallback mPicCallBack = new PictureCallback() {
-		@Override
-		public void onPictureTaken(byte[] data, Camera camera) {
-			FileOutputStream outStream = null;
-			try {
-				String filePath = "/mnt/sdcard/dcim/Camera"
-						+ String.format("/%d.jpg", System.currentTimeMillis());
-				outStream = new FileOutputStream(filePath);
-				outStream.write(data);
-				outStream.close();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			setResult(RESULT_OK);
-
-			// go back immediately
-			finish();
-		}
-	};
 
 	public Camera getCamera() {
 		return mPreview.mCamera;

@@ -18,7 +18,7 @@ public class CameraObject {
 		mCamera = camera;
 	}
 	
-	PictureCallback mPicCallBack = new PictureCallback() {
+	public PictureCallback mPicCallBack = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
 			FileOutputStream outStream = null;
@@ -49,8 +49,10 @@ public class CameraObject {
 	}
 	
 	public void takePicture(String filename){
+		throw new RuntimeException("Not Implemented");
 	}
 	
 	public void takePicture(Location loc){
+		throw new RuntimeException("Not Implemented");
 	}
 }
