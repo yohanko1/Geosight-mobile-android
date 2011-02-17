@@ -51,9 +51,8 @@ public class GeoSight extends Activity implements OnClickListener {
 		
 		if( v.getId() == R.id.CameraPreview){
 			intent = new Intent(this, CameraActivity.class);
-
 		} else if( v.getId() == R.id.MapButton ){
-			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
+			intent = new Intent(GeoSight.this, SightListActivity.class);
 		} else if( v.getId() == R.id.NavButton ){
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=40.113849,-88.224282") );
 		}
