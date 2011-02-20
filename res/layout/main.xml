@@ -12,4 +12,5 @@
 <Button android:text="Button" android:id="@+id/CameraPreview" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 <Button android:text="Map" android:id="@+id/MapButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 <Button android:text="Google Nav" android:id="@+id/NavButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+<Button android:text="View Sights" android:id="@+id/SightsButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 </LinearLayout>

@@ -17,6 +17,7 @@ public class GeoSight extends Activity implements OnClickListener {
 	private Button cameraPreview;
 	private Button mapButton;
 	private Button navButton;
+	private Button sightsButton;
 	
     /** Called when the activity is first created. */
     @Override
@@ -32,6 +33,9 @@ public class GeoSight extends Activity implements OnClickListener {
         
         navButton = (Button) findViewById(R.id.NavButton);
         navButton.setOnClickListener(this);
+        
+        sightsButton = (Button) findViewById(R.id.SightsButton);
+        sightsButton.setOnClickListener(this);
         
         
         try {
@@ -52,6 +56,8 @@ public class GeoSight extends Activity implements OnClickListener {
 		if( v.getId() == R.id.CameraPreview){
 			intent = new Intent(this, CameraActivity.class);
 		} else if( v.getId() == R.id.MapButton ){
+			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
+		} else if( v.getId() == R.id.SightsButton ){
 			intent = new Intent(GeoSight.this, SightListActivity.class);
 		} else if( v.getId() == R.id.NavButton ){
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=40.113849,-88.224282") );

@@ -6,8 +6,11 @@ import org.apache.http.ParseException;
 import org.json.JSONException;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import edu.illinois.geosight.servercom.Sight;
 
 public class SightListActivity extends ListActivity {
@@ -26,6 +29,21 @@ public class SightListActivity extends ListActivity {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	protected void onListItemClick (ListView l, View v, int position, long id){
+		Sight current = (Sight)l.getItemAtPosition(position);
+		Intent intent = new Intent(SightListActivity.this, GoogleMapActivity.class);
+		
+		intent.putExtra("latitude", current.getLatitudeE6() );
+		intent.putExtra("longitude", current.getLongitudeE6() );
+		
+		startActivity(intent);
+	}
+
+
 }

@@ -20,7 +20,6 @@ public class LocationOverlay extends ItemizedOverlay {
 	
 	public LocationOverlay(Drawable defaultMarker) {
 		super( boundCenterBottom(defaultMarker) );
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void addOverlay(OverlayItem overlay) {

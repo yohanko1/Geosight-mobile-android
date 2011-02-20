@@ -1,7 +1,11 @@
 package edu.illinois.geosight.servercom;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -24,15 +28,15 @@ public class Sight {
 	
 	protected String name;
 	protected double radius;
-	protected String created_at;
-	protected String updated_at;
+	protected Date created_at;
+	protected Date updated_at;
 	protected GeoPoint location;
 	
-	public Sight(long id) throws ClientProtocolException, IOException, JSONException{
+	public Sight(long id) throws ClientProtocolException, IOException, JSONException, java.text.ParseException{
 		populate(id);
 	}
 	
-	protected Sight(JSONObject jSight) throws JSONException{
+	protected Sight(JSONObject jSight) throws JSONException, java.text.ParseException{
 		populate(jSight);
 	}
 	
@@ -40,7 +44,7 @@ public class Sight {
 		return name;
 	}
 	
-	public static List<Sight> getAllSights() throws JSONException, ParseException, IOException{
+	public static List<Sight> getAllSights() throws JSONException, ParseException, IOException, java.text.ParseException{
 		List<Sight> sights = new ArrayList<Sight>();
 		
 		HttpClient client = new DefaultHttpClient();
@@ -61,7 +65,7 @@ public class Sight {
 		return sights;
 	}
 
-	private void populate(long id) throws ClientProtocolException, IOException, JSONException {
+	private void populate(long id) throws ClientProtocolException, IOException, JSONException, java.text.ParseException {
 		HttpClient client = new DefaultHttpClient();
 		// TODO make request depend on ID
 		HttpGet request = new HttpGet("http://geosight.heroku.com/sights/" + Long.toString(id) + ".json");
@@ -81,19 +85,31 @@ public class Sight {
 		return name;
 	}
 	
-	private void populate(JSONObject jSight) throws JSONException{
+	private void populate(JSONObject jSight) throws JSONException, java.text.ParseException{
 		this.id = jSight.getLong("id");
 		user_id = jSight.getLong("user_id");
 		name = jSight.getString("name");
 		radius = jSight.getDouble("radius");
 		
-		created_at  = jSight.getString("created_at");
-		updated_at = jSight.getString("updated_at");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+		
+		created_at  = df.parse( jSight.getString("created_at") );
+		updated_at = df.parse( jSight.getString("updated_at") );
 
-		
-		
 		int lat = (int)(jSight.getDouble("latitude") * 1000000);
 		int lon = (int)(jSight.getDouble("longitude") * 1000000);
 		location = new GeoPoint(lat, lon);
+	}
+
+	public GeoPoint getLocation() {
+		return location;
+	}
+
+	public int getLatitudeE6() {
+		return location.getLatitudeE6();
+	}
+
+	public int getLongitudeE6() {
+		return location.getLongitudeE6();
 	}
 }

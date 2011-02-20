@@ -14,34 +14,39 @@ import edu.illinois.geosight.maps.LocationOverlay;
 
 
 public class GoogleMapActivity extends MapActivity {
+	MapView mapView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mapview);
 		
-		MapView mapview = (MapView)findViewById(R.id.mapview);
+		mapView = (MapView) findViewById(R.id.mapview);
 		
-		mapview.setBuiltInZoomControls(true);
-		
-		GeoPoint siebelPoint = new GeoPoint(40113849, -88224282);
-		OverlayItem overlayitem2 = new OverlayItem(siebelPoint, "Hello", " from siebel!");
+		if( getIntent().getExtras() != null ){
+			Bundle extras = getIntent().getExtras();
+			GeoPoint p = new GeoPoint( extras.getInt("latitude"), extras.getInt("longitude") );
+			mapView.getController().animateTo(p);
+			
+			OverlayItem destination = new OverlayItem(p, "Your Sight", "Get Going");
+			
+			MapView mapview = (MapView)findViewById(R.id.mapview);
+			
+			mapview.setBuiltInZoomControls(true);
 
-		GeoPoint point = new GeoPoint(19240000,-99120000);
-		OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", "I'm in Mexico City!");
-
-		Drawable drawable = this.getResources().getDrawable(R.drawable.androidmarker);
-
-		LocationOverlay overlay = new LocationOverlay(drawable, GoogleMapActivity.this);
-		
-		overlay.addOverlay(overlayitem);
-		overlay.addOverlay(overlayitem2);
-		
-		MyLocationOverlay gpsOverlay = new MyLocationOverlay(GoogleMapActivity.this, mapview);
-		gpsOverlay.enableMyLocation();
-		gpsOverlay.enableCompass();
-		
-		mapview.getOverlays().add( gpsOverlay );
-		mapview.getOverlays().add( overlay );
+			Drawable drawable = this.getResources().getDrawable(R.drawable.androidmarker);
+	
+			LocationOverlay overlay = new LocationOverlay(drawable, GoogleMapActivity.this);
+			
+			overlay.addOverlay(destination);
+			
+			MyLocationOverlay gpsOverlay = new MyLocationOverlay(GoogleMapActivity.this, mapview);
+			gpsOverlay.enableMyLocation();
+			gpsOverlay.enableCompass();
+			
+			mapview.getOverlays().add( gpsOverlay );
+			mapview.getOverlays().add( overlay );
+		}
 	}
 	
 	@Override
