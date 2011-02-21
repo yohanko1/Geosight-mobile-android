@@ -33,6 +33,7 @@ public class SightListActivity extends ListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 	
 	protected void onListItemClick (ListView l, View v, int position, long id){

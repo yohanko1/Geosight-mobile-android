@@ -36,19 +36,8 @@ public class GeoSight extends Activity implements OnClickListener {
         
         sightsButton = (Button) findViewById(R.id.SightsButton);
         sightsButton.setOnClickListener(this);
-        
-        
-        try {
-			//Sight testSight = new Sight(1);
-			//Log.v("JSON", testSight.getName() );
-			//Login.populate(15);
-        	List<Sight> sights = Sight.getAllSights();
-        	Log.v("SIGHTS", sights.toString() );
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
     }
+    
 	@Override
 	public void onClick(View v) {
 		Intent intent = null;

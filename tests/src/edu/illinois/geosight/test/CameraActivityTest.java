@@ -35,6 +35,9 @@ public class CameraActivityTest extends
    
     /**
      * Ensures that when taking a picture, that the photo file is actually created
+     * 
+     * This test will FAIL on the emulator!
+     * 
      * @throws InterruptedException
      */
     public void testTakePic() throws InterruptedException{
