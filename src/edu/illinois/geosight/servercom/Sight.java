@@ -22,7 +22,7 @@ import org.json.JSONTokener;
 
 import com.google.android.maps.GeoPoint;
 
-public class Sight {
+public class Sight extends GeosightEntity{
 	protected long id;
 	protected long user_id;
 	
@@ -33,7 +33,9 @@ public class Sight {
 	protected GeoPoint location;
 	
 	public Sight(long id) throws ClientProtocolException, IOException, JSONException, java.text.ParseException{
-		populate(id);
+		super();
+		go( String.format("/sights/%d.json", id), Method.GET);
+		populate( jObj.getJSONObject("sight") );
 	}
 	
 	protected Sight(JSONObject jSight) throws JSONException, java.text.ParseException{
@@ -46,59 +48,31 @@ public class Sight {
 	
 	public static List<Sight> getAllSights() throws JSONException, ParseException, IOException, java.text.ParseException{
 		List<Sight> sights = new ArrayList<Sight>();
+		GeosightEntity allSights = new GeosightEntity();
+		allSights.go("/sights.json", Method.GET);
 		
-		HttpClient client = new DefaultHttpClient();
-		// TODO make request depend on ID
-		HttpGet request = new HttpGet("http://geosight.heroku.com/sights.json");
-		
-		HttpResponse response = client.execute(request);
-		
-		if( response == null ) return sights;
-		
-		String str = EntityUtils.toString(response.getEntity());
-		JSONArray jResult = (JSONArray) new JSONTokener(str).nextValue();
-		for(int i=0;i<jResult.length();i++){
-			JSONObject jSight = jResult.getJSONObject(i).getJSONObject("sight");
-			sights.add( new Sight(jSight) );
+		JSONArray result = allSights.jArr;
+		for(int i=0;i<result.length();i++){
+			allSights.changeContext( result.get(i) );
+			sights.add( new Sight( allSights.getJSONObject("sight") ) );
 		}
 		
 		return sights;
 	}
 
-	private void populate(long id) throws ClientProtocolException, IOException, JSONException, java.text.ParseException {
-		HttpClient client = new DefaultHttpClient();
-		// TODO make request depend on ID
-		HttpGet request = new HttpGet("http://geosight.heroku.com/sights/" + Long.toString(id) + ".json");
-		
-		HttpResponse response = client.execute(request);
-		
-		if( response == null ) return;
-		
-		String str = EntityUtils.toString(response.getEntity());
-		JSONObject jResult = (JSONObject) new JSONTokener(str).nextValue();
-		
-		JSONObject jSight = jResult.getJSONObject("sight");
-		populate(jSight);
-	}
-	
 	public String toString(){
 		return name;
 	}
 	
 	private void populate(JSONObject jSight) throws JSONException, java.text.ParseException{
-		this.id = jSight.getLong("id");
-		user_id = jSight.getLong("user_id");
-		name = jSight.getString("name");
-		radius = jSight.getDouble("radius");
-		
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-		
-		created_at  = df.parse( jSight.getString("created_at") );
-		updated_at = df.parse( jSight.getString("updated_at") );
-
-		int lat = (int)(jSight.getDouble("latitude") * 1000000);
-		int lon = (int)(jSight.getDouble("longitude") * 1000000);
-		location = new GeoPoint(lat, lon);
+		changeContext(jSight);
+		this.id = getLong("id");
+		user_id = getLong("user_id");
+		name = getString("name");
+		radius = getDouble("radius");
+		created_at  = getDate("created_at");
+		updated_at = getDate("updated_at");
+		location = getGeoPoint("latitude", "longitude");
 	}
 
 	public GeoPoint getLocation() {

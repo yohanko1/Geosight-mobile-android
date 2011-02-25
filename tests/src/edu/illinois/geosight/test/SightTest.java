@@ -11,7 +11,8 @@ public class SightTest extends TestCase {
 		try{
 			sight = new Sight(1);
 		} catch(Exception ex){
-			fail("Exception thrown");
+			ex.printStackTrace();
+			fail(ex.getMessage());
 		}
 	}
 	
