@@ -18,7 +18,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -27,8 +26,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.util.Log;
+
 import com.google.android.maps.GeoPoint;
 
+/**
+ * The GeosightEntity class handles JSON retrieval from both POST and GET methods and 
+ * simplified ways to access the returned JSON.
+ * @author Steven Kabbes
+ */
 public class GeosightEntity {
 	
 	// Base url for all requests on Geosight
@@ -40,12 +46,54 @@ public class GeosightEntity {
 	// the http context used for doing queries.  This is to preserve cookies
 	protected static HttpContext httpContext = null;
 		
+	// The underlying JSONObject to retrieve data from
 	protected JSONObject jObj = null;
+	
+	// The underlying JSONArray to retrieve data from (if it exists)
 	protected JSONArray jArr = null;
 	
-	public enum Method { GET, POST };
+	// enum for the 2 supported HTTP methods
+	protected enum Method { GET, POST };
 	
-	public GeosightEntity(){
+	public static GeosightEntity jsonFromPost(String relativeURL) throws GeosightException{
+		GeosightEntity result = new GeosightEntity();
+		result.go(relativeURL, Method.POST, null);
+		return result;
+	}
+	
+	public static GeosightEntity jsonFromPost(String relativeURL, List<NameValuePair> pairs) throws GeosightException{
+		GeosightEntity result = new GeosightEntity();	
+		result.go(relativeURL, Method.POST, pairs);
+		return result;
+	}
+	
+	public static List<GeosightEntity> jsonArrayFromPost(String relativeURL) throws GeosightException{
+		GeosightEntity result = new GeosightEntity();
+		result.go(relativeURL, Method.POST, null);
+		return result.getArray();
+	}
+	
+	public static List<GeosightEntity> jsonArrayFromPost(String relativeURL, List<NameValuePair> pairs) throws GeosightException{
+		GeosightEntity result = new GeosightEntity();	
+		result.go(relativeURL, Method.POST, pairs);
+		return result.getArray();
+	}
+	
+	public static GeosightEntity jsonFromGet(String relativeURL) throws GeosightException{
+		GeosightEntity result = new GeosightEntity();
+		result.go(relativeURL, Method.GET, null);
+		return result;
+	}
+	
+	public static List<GeosightEntity> jsonArrayFromGet(String relativeURL) throws GeosightException{
+		GeosightEntity result = new GeosightEntity();
+		result.go(relativeURL, Method.GET, null);
+		return result.getArray();
+	}
+	
+
+
+	protected GeosightEntity(){
 		if( client == null ){
 			client = new DefaultHttpClient();
 
@@ -54,38 +102,56 @@ public class GeosightEntity {
 		}
 	}
 	
-	protected void go(String relativeURL, Method method) throws JSONException, ParseException, IOException{
-		
+	public GeosightEntity(JSONObject obj){
+		this();
+		jObj = obj;
+	}
+	
+	protected void go(String relativeURL, Method method) throws GeosightException{
 		go( relativeURL, method, null);
 	}
 	
-	protected void go(String relativeURL, Method method, List<NameValuePair> pairs) throws JSONException, ParseException, IOException{
-		
-		HttpUriRequest request;
-		if( method == Method.GET){
-			request = new HttpGet(BASE_URL + relativeURL);
-		} else {
-			HttpPost temp = new HttpPost(BASE_URL + relativeURL);
-			temp.setEntity(new UrlEncodedFormEntity(pairs));
-			request = temp;
+	protected void go(String relativeURL, Method method, List<NameValuePair> pairs) throws GeosightException{
+		try{
+			
+			HttpUriRequest request;
+			if( method == Method.GET){
+				request = new HttpGet(BASE_URL + relativeURL);
+			} else {
+				HttpPost temp = new HttpPost(BASE_URL + relativeURL);
+				
+				if(pairs != null){
+					temp.setEntity(new UrlEncodedFormEntity(pairs));
+				}
+				request = temp;
+			}
+			
+			HttpResponse response = client.execute(request, httpContext);
+	
+			String str = EntityUtils.toString(response.getEntity());
+			
+			Object temp = new JSONTokener(str).nextValue();
+			changeContext(temp);
+			
+		} catch (ParseException e) {
+			throw new GeosightException(e);
+		} catch (JSONException e) {
+			throw new GeosightException(e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+			//throw new GeosightException(e);
 		}
-		
-		HttpResponse response = client.execute(request, httpContext);
-
-		String str = EntityUtils.toString(response.getEntity());
-		
-		Object temp = new JSONTokener(str).nextValue();
-		changeContext(temp);
 	}
 	
 	protected void login(String email, String password) throws ClientProtocolException, IOException, JSONException{
-		
-		GeosightEntity temp = new GeosightEntity();
-		List<NameValuePair> pairs = new ArrayList<NameValuePair>(2);
-		pairs.add( new BasicNameValuePair("user_session[email]", email));
-		pairs.add( new BasicNameValuePair("user_session[password]", password));
-		
-		temp.go("/login.json", Method.POST, pairs);
+//		
+//		GeosightEntity temp = new GeosightEntity();
+//		List<NameValuePair> pairs = new ArrayList<NameValuePair>(2);
+//		pairs.add( new BasicNameValuePair("user_session[email]", email));
+//		pairs.add( new BasicNameValuePair("user_session[password]", password));
+//		
+//		temp.go("/login.json", Method.POST, pairs);
 	}
 	
 	protected void changeContext(Object o){
@@ -98,40 +164,68 @@ public class GeosightEntity {
 		}
 	}
 	
-	protected Date getDate(String key) throws java.text.ParseException, JSONException{
+	//=========== GETTERS =========================================================
+	
+	private List<GeosightEntity> getArray() throws GeosightException {
+		List<GeosightEntity> arr = new ArrayList<GeosightEntity>();
+		if( jArr != null ){
+			for( int i=0;i<jArr.length();i++){
+				try {
+					arr.add( new GeosightEntity( jArr.getJSONObject(i) ) );
+				} catch (JSONException e) {
+					throw new GeosightException(e);
+				}
+			}
+		}
+		return arr;
+	}
+	
+	public GeosightEntity getObject(String key) throws JSONException{
+		return new GeosightEntity( jObj.getJSONObject(key) );
+	}
+
+	public boolean getBoolean(String key) throws JSONException{
+		return jObj.getBoolean(key);
+	}
+
+	public Date getDate(String key) throws java.text.ParseException, JSONException{
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 		return df.parse( jObj.getString(key) );
 	}
 	
-	protected long getLong(String key) throws JSONException{
+	public Double getDouble(String key) throws JSONException{
+		return jObj.getDouble(key);
+	}
+
+	public GeoPoint getGeoPoint(String lat, String lon) throws JSONException{
+		return new GeoPoint( (int)(getDouble(lat) * 1000000), (int)(getDouble(lon) * 1000000) );
+	}
+
+	public int getInt(String key) throws JSONException{
+		return jObj.getInt(key);
+	}
+
+	public long getLong(String key) throws JSONException{
 		return jObj.getLong(key);
 	}
 	
-	protected boolean getBoolean(String key) throws JSONException{
-		return jObj.getBoolean(key);
+	public JSONArray getJSONArray(){
+		return jArr;
 	}
-	
-	protected Double getDouble(String key) throws JSONException{
-		return jObj.getDouble(key);
-	}
-	
-	protected int getInt(String key) throws JSONException{
-		return jObj.getInt(key);
-	}
-	
-	protected String getString(String key) throws JSONException{
-		return jObj.getString(key);
-	}
-	
-	protected JSONArray getJSONArray(String key) throws JSONException{
+
+	public JSONArray getJSONArray(String key) throws JSONException{
 		return jObj.getJSONArray(key);
 	}
 	
-	protected JSONObject getJSONObject(String key) throws JSONException{
+	public JSONObject getJSONObject(String key) throws JSONException{
 		return jObj.getJSONObject(key);
 	}
+
+	public JSONObject getJSONObject(){
+		return jObj;
+	}
 	
-	protected GeoPoint getGeoPoint(String lat, String lon) throws JSONException{
-		return new GeoPoint( (int)(getDouble(lat) * 1000000), (int)(getDouble(lon) * 1000000) );
+	public String getString(String key) throws JSONException{
+		return jObj.getString(key);
 	}
 }

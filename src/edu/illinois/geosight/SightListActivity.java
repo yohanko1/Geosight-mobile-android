@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import edu.illinois.geosight.servercom.GeosightException;
 import edu.illinois.geosight.servercom.Sight;
 
 public class SightListActivity extends ListActivity {
@@ -20,17 +21,7 @@ public class SightListActivity extends ListActivity {
 		
 		try {
 			setListAdapter( new ArrayAdapter<Sight>(this, android.R.layout.simple_list_item_1, Sight.getAllSights()));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
+		} catch (GeosightException e) {
 			e.printStackTrace();
 		}
 		
