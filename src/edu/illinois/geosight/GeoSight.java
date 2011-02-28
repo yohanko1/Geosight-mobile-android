@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.illinois.geosight.maps.GoogleMapActivity;
 import edu.illinois.geosight.servercom.Sight;
 
 public class GeoSight extends Activity implements OnClickListener {

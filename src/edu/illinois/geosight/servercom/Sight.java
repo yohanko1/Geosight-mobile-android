@@ -47,7 +47,11 @@ public class Sight {
 
 			
 		for(int i=0;i<allSights.size();i++){
-			sights.add( new Sight( allSights.get(i) ) );
+			try {
+				sights.add( new Sight( allSights.get(i).getObject("sight") ) );
+			} catch (JSONException e) {
+				continue;
+			}
 		}
 		
 		return sights;

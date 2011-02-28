@@ -13,7 +13,7 @@
 		</activity>
 
 		<activity android:name="CameraActivity"></activity>
-		<activity android:name="GoogleMapActivity" android:label="Map View"></activity>>
+		<activity android:label="Map View" android:name=".maps.GoogleMapActivity"></activity>>
 		<activity android:name="SightListActivity" android:label="Select a Sight"></activity>>
 		
         <uses-library android:name="com.google.android.maps"/>
