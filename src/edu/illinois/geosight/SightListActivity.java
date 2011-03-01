@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.apache.http.ParseException;
 import org.json.JSONException;
 
+import com.google.android.maps.GeoPoint;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,8 +34,9 @@ public class SightListActivity extends ListActivity {
 		Sight current = (Sight)l.getItemAtPosition(position);
 		Intent intent = new Intent(SightListActivity.this, GoogleMapActivity.class);
 		
-		intent.putExtra("latitude", current.getLatitudeE6() );
-		intent.putExtra("longitude", current.getLongitudeE6() );
+		GeoPoint loc = current.getLocation();
+		intent.putExtra("latitude", loc.getLatitudeE6() );
+		intent.putExtra("longitude", loc.getLongitudeE6() );
 		
 		startActivity(intent);
 	}

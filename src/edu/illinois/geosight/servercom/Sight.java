@@ -79,11 +79,7 @@ public class Sight {
 		return location;
 	}
 
-	public int getLatitudeE6() {
-		return location.getLatitudeE6();
-	}
-
-	public int getLongitudeE6() {
-		return location.getLongitudeE6();
+	public double getRadius() {
+		return radius;
 	}
 }

@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import com.google.android.maps.OverlayItem;
 
+import edu.illinois.geosight.R;
+
 /**
  * A view representing a MapView marker information balloon.
  * <p>
@@ -63,18 +65,19 @@ public class BalloonOverlayView extends FrameLayout {
 		layout = new LinearLayout(context);
 		layout.setVisibility(VISIBLE);
 
-//		LayoutInflater inflater = (LayoutInflater) context
-//				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		View v = inflater.inflate(R.layout.balloon_overlay, layout);
-//		title = (TextView) v.findViewById(R.id.balloon_item_title);
-//		snippet = (TextView) v.findViewById(R.id.balloon_item_snippet);
-//
-//		ImageView close = (ImageView) v.findViewById(R.id.close_img_button);
-//		close.setOnClickListener(new OnClickListener() {
-//			public void onClick(View v) {
-//				layout.setVisibility(GONE);
-//			}
-//		});
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		View v = inflater.inflate(R.layout.balloon_overlay, layout);
+		title = (TextView) v.findViewById(R.id.balloon_item_title);
+		snippet = (TextView) v.findViewById(R.id.balloon_item_snippet);
+
+		ImageView close = (ImageView) v.findViewById(R.id.close_img_button);
+		close.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				layout.setVisibility(GONE);
+			}
+		});
 
 		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
