@@ -20,32 +20,43 @@ public class GoogleMapActivity extends MapActivity {
 	MapView mMapView;
 	MapController mController;
 	LocationOverlay mSightMarkers;
-	
+	MyLocationOverlay mLocOverlay;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mapview);
 		mMapView = (MapView) findViewById(R.id.mapview);
 		mController = mMapView.getController();
-		
-		markCurrentLoc();		
-		markNearestSights();
+		mLocOverlay = new MyLocationOverlay(this, mMapView);
+		mLocOverlay.enableMyLocation();
+		mLocOverlay.enableCompass();
+		mMapView.getOverlays().add(mLocOverlay);
+		mMapView.setBuiltInZoomControls(true);
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		markCurrentLoc();
+		markNearestSights();
+	};
 
 	private void markNearestSights() {
 		List<Sight> nearSights = null;
 		try {
 			// Assumes we are getting nearest sights from the server...
-			nearSights= Sight.getAllSights();
+			nearSights = Sight.getAllSights();
 		} catch (GeosightException e) {
 			e.printStackTrace();
 		}
-		
-		if(nearSights != null) {
+
+		if (nearSights != null) {
 			// mark sights on the map
-			Drawable markers = getResources().getDrawable(R.drawable.pinkmarker);
+			Drawable markers = getResources()
+					.getDrawable(R.drawable.pinkmarker);
 			mSightMarkers = new LocationOverlay(markers, mMapView);
-			for(Sight s:nearSights) {
+			for (Sight s : nearSights) {
 				GeoPoint p = s.getLocation();
 				OverlayItem i = new OverlayItem(p, s.getName(), s.toString());
 				mSightMarkers.addOverlay(i, s);
@@ -55,17 +66,14 @@ public class GoogleMapActivity extends MapActivity {
 	}
 
 	private void markCurrentLoc() {
-		final MyLocationOverlay myLocOverlay = new MyLocationOverlay(this, mMapView);
-		myLocOverlay.enableMyLocation();
-		myLocOverlay.enableCompass();
-		mMapView.getOverlays().add(myLocOverlay);
-		mMapView.setBuiltInZoomControls(true);
-		
-		myLocOverlay.runOnFirstFix( new Runnable(){
+		/*
+		 * TODO: Need to set current location marker to the last set location
+		 * how to get last-set location?
+		 */
+		mLocOverlay.runOnFirstFix(new Runnable() {
 			@Override
 			public void run() {
-				GeoPoint myLocation = myLocOverlay.getMyLocation();
-				mController.animateTo( myLocation );
+				mController.animateTo(mLocOverlay.getMyLocation());
 			}
 		});
 	}
