@@ -3,14 +3,37 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#8e8e8e"
     >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
-<Button android:text="Button" android:id="@+id/CameraPreview" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-<Button android:text="Map" android:id="@+id/MapButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+    
+<ImageView android:id="@+id/logo" android:layout_marginTop="10dp" android:layout_marginBottom="30dp" android:layout_gravity="right" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/logo"></ImageView>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1.0"
+    >
+<Button  android:layout_marginBottom="25dp" android:layout_weight=".85" android:typeface="sans" android:textSize="20dp" android:textStyle="bold" android:gravity="right|center_vertical" android:text="LOGIN" android:background="@drawable/homescreen_button" android:layout_height="wrap_content" android:id="@+id/CameraPreview" android:layout_width="0dp" ></Button>
+</LinearLayout>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1.0"
+    >
+<Button  android:id="@+id/SightsButton" android:layout_marginBottom="25dp" android:layout_weight=".85" android:typeface="sans" android:textSize="20dp" android:textStyle="bold" android:gravity="right|center_vertical" android:text="VIEW SIGHTS" android:background="@drawable/homescreen_button" android:layout_height="wrap_content"  android:layout_width="0dp" ></Button>
+</LinearLayout>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1.0"
+    >
+<Button  android:id="@+id/MapButton" android:layout_marginBottom="25dp" android:layout_weight=".85" android:typeface="sans" android:textSize="20dp" android:textStyle="bold" android:gravity="right|center_vertical" android:text="MAP" android:background="@drawable/homescreen_button" android:layout_height="wrap_content" android:layout_width="0dp" ></Button>
+</LinearLayout>
+
 <Button android:text="Google Nav" android:id="@+id/NavButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-<Button android:text="View Sights" android:id="@+id/SightsButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 </LinearLayout>
