@@ -1,5 +1,6 @@
 package edu.illinois.geosight.servercom;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,13 +19,12 @@ public class Sight {
 	protected Date updated_at;
 	protected GeoPoint location;
 
-	public Sight(long id) throws GeosightException {
+	public Sight(long _id) throws GeosightException {
 
-		GeosightEntity sight = GeosightEntity.jsonFromGet(String.format(
-				"/sights/%d.json", id));
+		GeosightEntity sight = GeosightEntity.jsonFromGet(String.format("/sights/%d.json", _id));
 
 		try {
-			populate(sight);
+			populate( sight.getObject("sight") );
 		} catch (JSONException e) {
 			throw new GeosightException(e);
 		} catch (java.text.ParseException e) {
@@ -62,8 +62,7 @@ public class Sight {
 		return name;
 	}
 
-	private void populate(GeosightEntity sight) throws JSONException,
-			java.text.ParseException {
+	private void populate(GeosightEntity sight) throws JSONException, ParseException {
 		id = sight.getLong("id");
 		user_id = sight.getLong("user_id");
 		name = sight.getString("name");

@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -46,7 +47,7 @@ public class GeosightEntity {
 	// the http context used for doing queries.  This is to preserve cookies
 	protected static HttpContext httpContext = null;
 		
-	// The underlying JSONObject to retrieve data from
+	// The underlying JSONObject to retrieve data from (if it exists)
 	protected JSONObject jObj = null;
 	
 	// The underlying JSONArray to retrieve data from (if it exists)
@@ -55,36 +56,73 @@ public class GeosightEntity {
 	// enum for the 2 supported HTTP methods
 	protected enum Method { GET, POST };
 	
+	/**
+	 * Fetch a Geosight Entity from a POST (without any parameters)
+	 * @param relativeURL the relative URL to fetch the JSON from
+	 * @return
+	 * @throws GeosightException
+	 */
 	public static GeosightEntity jsonFromPost(String relativeURL) throws GeosightException{
 		GeosightEntity result = new GeosightEntity();
 		result.go(relativeURL, Method.POST, null);
 		return result;
 	}
 	
+	/**
+	 * Fetch a Geosight Entity from a POST with parameters
+	 * @param relativeURL the relative url to fetch from
+	 * @param pairs the parameters to send along with the POST
+	 * @return
+	 * @throws GeosightException
+	 */
 	public static GeosightEntity jsonFromPost(String relativeURL, List<NameValuePair> pairs) throws GeosightException{
 		GeosightEntity result = new GeosightEntity();	
 		result.go(relativeURL, Method.POST, pairs);
 		return result;
 	}
 	
+	/**
+	 * Fetch an array of object from the Geosight server using a POST
+	 * @param relativeURL the relative URL to fetch from
+	 * @return List of Geosight Entities retrieved from the server
+	 * @throws GeosightException
+	 */
 	public static List<GeosightEntity> jsonArrayFromPost(String relativeURL) throws GeosightException{
 		GeosightEntity result = new GeosightEntity();
 		result.go(relativeURL, Method.POST, null);
 		return result.getArray();
 	}
 	
+	/**
+	 * Fetch an array of object from the Geosight server using a POST
+	 * @param relativeURL the relative URL to fetch from
+	 * @return List of Geosight Entities retrieved from the server
+	 * @throws GeosightException
+	 */
 	public static List<GeosightEntity> jsonArrayFromPost(String relativeURL, List<NameValuePair> pairs) throws GeosightException{
 		GeosightEntity result = new GeosightEntity();	
 		result.go(relativeURL, Method.POST, pairs);
 		return result.getArray();
 	}
 	
+	/**
+	 * Fetch an object from the Geosight server using a GET request
+	 * @param relativeURL the relative URL to fetch from
+	 * @return List of Geosight Entities retrieved from the server
+	 * @throws GeosightException
+	 */
 	public static GeosightEntity jsonFromGet(String relativeURL) throws GeosightException{
 		GeosightEntity result = new GeosightEntity();
 		result.go(relativeURL, Method.GET, null);
 		return result;
 	}
 	
+	/**
+	 * Fetch an array of object from the Geosight server using a GET
+	 * @param relativeURL the relative URL to fetch from
+	 * @return List of Geosight Entities retrieved from the server
+	 * @throws GeosightException
+	 */
 	public static List<GeosightEntity> jsonArrayFromGet(String relativeURL) throws GeosightException{
 		GeosightEntity result = new GeosightEntity();
 		result.go(relativeURL, Method.GET, null);
@@ -92,8 +130,11 @@ public class GeosightEntity {
 	}
 	
 
-
+	/**
+	 * Geosight Entities must be constructed from the static methods above
+	 */
 	protected GeosightEntity(){
+		// keep all connections on one HTTP Client
 		if( client == null ){
 			client = new DefaultHttpClient();
 
@@ -102,6 +143,10 @@ public class GeosightEntity {
 		}
 	}
 	
+	/**
+	 * Initialize a GeosightEntity with a JSONObject
+	 * @param obj the JSONObject to wrap
+	 */
 	public GeosightEntity(JSONObject obj){
 		this();
 		jObj = obj;
@@ -130,30 +175,51 @@ public class GeosightEntity {
 	
 			String str = EntityUtils.toString(response.getEntity());
 			
+			Log.v("JSON", str);
+			
 			Object temp = new JSONTokener(str).nextValue();
 			changeContext(temp);
 			
 		} catch (ParseException e) {
+			e.printStackTrace();
+
 			throw new GeosightException(e);
 		} catch (JSONException e) {
+			e.printStackTrace();
+
 			throw new GeosightException(e);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
-			//throw new GeosightException(e);
+			throw new GeosightException(e);
 		}
 	}
 	
-	protected void login(String email, String password) throws ClientProtocolException, IOException, JSONException{
-//		
-//		GeosightEntity temp = new GeosightEntity();
-//		List<NameValuePair> pairs = new ArrayList<NameValuePair>(2);
-//		pairs.add( new BasicNameValuePair("user_session[email]", email));
-//		pairs.add( new BasicNameValuePair("user_session[password]", password));
-//		
-//		temp.go("/login.json", Method.POST, pairs);
+	/**
+	 * Login to the Geosight Server.  Must be called before authenticated methods can be called
+	 * @param email the email address to login with
+	 * @param password the password to log in with
+	 * @return whether the login succeeded
+	 * @throws GeosightException
+	 */
+	public static boolean login(String email, String password) throws GeosightException {	
+		GeosightEntity temp = new GeosightEntity();
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>(2);
+		pairs.add( new BasicNameValuePair("user_session[email]", email));
+		pairs.add( new BasicNameValuePair("user_session[password]", password));
+		
+		temp.go("/login.json", Method.POST, pairs);
+		
+		try {
+			return ! temp.getBoolean("invalid_password");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
+	/**
+	 * Set the underlying JSON Object / Array based on the next fetched object
+	 * @param o the object to change contexts to
+	 */
 	protected void changeContext(Object o){
 		if( o instanceof JSONObject ){
 			jObj = (JSONObject)o;
@@ -166,6 +232,9 @@ public class GeosightEntity {
 	
 	//=========== GETTERS =========================================================
 	
+	/**
+	 * Convert a JSONArray to an Array of GeosightEntities
+	 */
 	private List<GeosightEntity> getArray() throws GeosightException {
 		List<GeosightEntity> arr = new ArrayList<GeosightEntity>();
 		if( jArr != null ){
@@ -185,6 +254,8 @@ public class GeosightEntity {
 	}
 
 	public boolean getBoolean(String key) throws JSONException{
+		if( jObj == null) throw new GeosightException("Invalid JSON");
+		
 		return jObj.getBoolean(key);
 	}
 

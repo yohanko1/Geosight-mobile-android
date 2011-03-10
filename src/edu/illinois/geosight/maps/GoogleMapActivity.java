@@ -53,8 +53,7 @@ public class GoogleMapActivity extends MapActivity {
 
 		if (nearSights != null) {
 			// mark sights on the map
-			Drawable markers = getResources()
-					.getDrawable(R.drawable.pinkmarker);
+			Drawable markers = getResources().getDrawable(R.drawable.pinkmarker);
 			mSightMarkers = new LocationOverlay(markers, mMapView);
 			for (Sight s : nearSights) {
 				GeoPoint p = s.getLocation();

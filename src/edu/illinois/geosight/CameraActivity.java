@@ -17,6 +17,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -27,23 +28,19 @@ import android.view.WindowManager;
 /**
  * This class is the activity for taking a picture using the camera.
  */
-public class CameraActivity extends Activity {
-	private Preview mPreview;
-	private GPSLocationListener mListener;
-	private LocationManager mManager;
-	private String mBestProvider;
-	private CameraObject mCamObj;
+public class CameraActivity extends Activity implements OnClickListener{
+	
+	private Preview mPreview;	
+	private GPSCameraActivity mGPSCam;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 			
-		mListener = new GPSLocationListener();
-		mManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-		Criteria criteria = new Criteria();
-		mBestProvider = mManager.getBestProvider(criteria, false);
+		//mGPSCam = new GPSCameraActivity(this);
 		
 		// Hide the window title.
+		// TODO move this to XML
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		getWindow().setFormat(PixelFormat.TRANSLUCENT);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -53,50 +50,40 @@ public class CameraActivity extends Activity {
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new Preview(this);
 		
-		
 		// camera call-back
-		mPreview.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				takePic();
-				finish();
-			}
-		});
+		mPreview.setOnClickListener(this);
+		
 
 		setContentView(mPreview);
 	}
 	
 
 	private void takePic() {
-		final Location currentLocation = mManager.getLastKnownLocation(mBestProvider);
-		if( currentLocation != null ){
-			CameraObject camObj = new CameraObject(mPreview.mCamera);
-			
-			mPreview.mParam.setGpsLatitude( currentLocation.getLatitude() );
-			mPreview.mParam.setGpsLongitude( currentLocation.getLongitude() );
-			mPreview.mParam.setGpsAltitude( currentLocation.getAltitude() );
-			mPreview.mParam.setGpsTimestamp(currentLocation.getTime() );
-			
-			mPreview.mCamera.setParameters(mPreview.mParam);
-			mPreview.mCamera.takePicture(null, null, camObj.mPicCallBack);
-		}
+		String filename = Environment.DIRECTORY_DCIM + "/Geosight/" + String.format("%d.jpg", System.currentTimeMillis());
+		//mGPSCam.takePicture(mPreview.mCamera, filename);
 	}
 	
 	protected void onResume() {
 		super.onResume();
-		
-		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 5.0f, mListener);
-		IntentFilter filter = new IntentFilter("android.intent.action.CAMERA_BUTTON");
+		mGPSCam.turnOnGPS();
 	}
 
 	protected void onPause() {
 		super.onPause();
-		mManager.removeUpdates(mListener);
-		mListener.clearLocation();
+		mGPSCam.turnOffGPS();
 	}
 
 	public Camera getCamera() {
 		return mPreview.mCamera;
+	}
+
+
+	@Override
+	public void onClick(View v) {
+		if( v == mPreview ){
+			takePic();
+			finish();
+		}
 	}
 }
 

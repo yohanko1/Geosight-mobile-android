@@ -1,10 +1,12 @@
 package edu.illinois.geosight;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -75,15 +77,16 @@ public class GeoSight extends Activity implements OnClickListener {
 		Intent intent = null;
 		
 		if( v.getId() == R.id.CameraPreview){
-			intent = new Intent(this, CameraActivity.class);
+			intent = new Intent(this, GPSCameraActivity.class);
 		} else if( v.getId() == R.id.MapButton ){
 			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
 		} else if( v.getId() == R.id.SightsButton ){
 			intent = new Intent(GeoSight.this, SightListActivity.class);
 		} else if( v.getId() == R.id.NavButton ){
+			
 			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=40.113849,-88.224282") );
+			//intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.camera") );
 		}
-		
 		startActivity(intent);
 	}
 }
