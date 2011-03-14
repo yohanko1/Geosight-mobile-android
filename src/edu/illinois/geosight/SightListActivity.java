@@ -17,6 +17,11 @@ import edu.illinois.geosight.maps.GoogleMapActivity;
 import edu.illinois.geosight.servercom.GeosightException;
 import edu.illinois.geosight.servercom.Sight;
 
+
+/**
+ * List View showing the list of current sights on the website
+ * @author Steven Kabbes
+ */
 public class SightListActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -30,6 +35,9 @@ public class SightListActivity extends ListActivity {
 		
 	}
 	
+	/**
+	 * Launch a mapview showing this particular sight
+	 */
 	protected void onListItemClick (ListView l, View v, int position, long id){
 		Sight current = (Sight)l.getItemAtPosition(position);
 		Intent intent = new Intent(SightListActivity.this, GoogleMapActivity.class);

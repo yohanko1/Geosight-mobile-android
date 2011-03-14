@@ -23,5 +23,4 @@
 <Button style="@style/homescreen_button_style" android:id="@+id/MapButton" android:text="MAP"></Button>
 </LinearLayout>
 
-<Button android:text="Google Nav" android:id="@+id/NavButton" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 </LinearLayout>

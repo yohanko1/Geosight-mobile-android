@@ -6,8 +6,16 @@ import android.content.Intent;
 import android.os.Vibrator;
 import android.widget.Toast;
 
+/**
+ * Receive broadcast notification relating to proximity
+ * @author Yo Han Ko
+ *
+ */
 public class ProximityBroadcastReceiver extends BroadcastReceiver {
 
+	/**
+	 * Just show the user a simple notification that they are close to a sight
+	 */
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Toast.makeText(context, "You are 1km away from your destination!", Toast.LENGTH_LONG).show();

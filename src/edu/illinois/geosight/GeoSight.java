@@ -13,11 +13,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import edu.illinois.geosight.maps.GoogleMapActivity;
 
+/*
+ * This is the homescreen activity, which serves as a landing page for the rest of the applicaiton
+ */
 public class GeoSight extends Activity implements OnClickListener {
 	
+	// Launch the camera
 	private Button cameraPreview;
+	
+	// Launch the map
 	private Button mapButton;
-	private Button navButton;
+	
 	private Button sightsButton;
 	private Button loginButton;
 	private ImageView mLogo;
@@ -26,58 +32,59 @@ public class GeoSight extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         // allows smooth alpha on this window
         getWindow().setFormat(PixelFormat.RGBA_8888);
-        
         setContentView(R.layout.main);
         
+        // set up private member variable for the view
         mLogo = (ImageView) findViewById(R.id.logo);
-        
         loginButton = (Button) findViewById(R.id.LoginButton);
-        loginButton.setOnClickListener(this);
-        
         cameraPreview = (Button) findViewById(R.id.CameraPreview);
-        cameraPreview.setOnClickListener(this);
-        
         mapButton = (Button) findViewById(R.id.MapButton);
-        mapButton.setOnClickListener(this);
-        
-        navButton = (Button) findViewById(R.id.NavButton);
-        navButton.setOnClickListener(this);
-        
         sightsButton = (Button) findViewById(R.id.SightsButton);
+        
+        // register the click events for each button
+        loginButton.setOnClickListener(this);
+        cameraPreview.setOnClickListener(this);
+        mapButton.setOnClickListener(this);
         sightsButton.setOnClickListener(this);
         
+        // start up the entrance animations
         startAnimations();
 
     }
     
+    // Let's go ahead and start the entrance animation for the buttons and logo
     private void startAnimations(){
     	Animation slideInRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_from_right);
-    	Animation slideInLeft = AnimationUtils.loadAnimation(this, R.anim.slide_in_from_left);
     	
         mLogo.startAnimation( slideInRight );
         
-        // start these after first one finishes
-        slideInLeft.setStartOffset( slideInRight.getDuration() );
-        cameraPreview.startAnimation( slideInLeft );
-        
-    	// delay this one 1/3 the total
-        slideInLeft = AnimationUtils.loadAnimation(this, R.anim.slide_in_from_left);
-        slideInLeft.setStartOffset( slideInRight.getDuration() + slideInLeft.getDuration() / 3 );
-        sightsButton.startAnimation( slideInLeft );
-
-        // need to reload this animation, since it'll have a different offset
-        slideInLeft = AnimationUtils.loadAnimation(this, R.anim.slide_in_from_left);
-        slideInLeft.setStartOffset( slideInRight.getDuration() + 2 * slideInLeft.getDuration() / 3 );
-        mapButton.startAnimation( slideInLeft );
+        // set up animations for the buttons
+        for(int i=0;i<4;i++){
+        	Animation slideInLeft = AnimationUtils.loadAnimation(this, R.anim.slide_in_from_left);
+        	
+        	// each slide in left will be delayed slightly from the previous
+        	slideInLeft.setStartOffset( slideInRight.getDuration() + i * slideInLeft.getDuration() / 4 );
+        	
+        	if(i == 0){
+        		loginButton.startAnimation( slideInLeft );
+        	} else if (i == 1){
+        		cameraPreview.startAnimation( slideInLeft );
+        	} else if (i == 2){
+    	        sightsButton.startAnimation( slideInLeft );
+        	} else if (i == 3 ){
+    	        mapButton.startAnimation( slideInLeft );
+        	}
+        }
     }
     
-	@Override
+    /**
+     * Handle button clicks for the 4 main buttons on the screen
+     */
+    @Override
 	public void onClick(View v) {
 		Intent intent = null;
-		
 		if( v.getId() == R.id.CameraPreview){
 			intent = new Intent(this, GPSCameraActivity.class);
 		} else if ( v.getId() == R.id.LoginButton ){
@@ -87,20 +94,17 @@ public class GeoSight extends Activity implements OnClickListener {
 			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
 		} else if( v.getId() == R.id.SightsButton ){
 			intent = new Intent(GeoSight.this, SightListActivity.class);
-		} else if( v.getId() == R.id.NavButton ){
-			
-			intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=40.113849,-88.224282") );
-			//intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.camera") );
 		}
 		startActivity(intent);
 	}
 	
-	// TODO http://developer.android.com/guide/topics/location/obtaining-user-location.html
+    // simply here for conveniance later
 	@Override
 	protected void onResume() {
 		super.onResume();
 	}
 	
+	// simply here for conveniance later
 	@Override
 	protected void onPause() {
 		super.onPause();

@@ -26,7 +26,10 @@ public class GoogleMapActivity extends MapActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mapview);
+		
 		mMapView = (MapView) findViewById(R.id.mapview);
+		
+		// set up the map view
 		mController = mMapView.getController();
 		mLocOverlay = new MyLocationOverlay(this, mMapView);
 		mLocOverlay.enableMyLocation();
@@ -77,9 +80,16 @@ public class GoogleMapActivity extends MapActivity {
 		});
 	}
 
+	// necessary function for Google to collect data or something.
+	// return false if we aren't showing a route
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
-
+	
+	// necessary function to tell Google whether we're displaying a location or not
+	@Override
+	protected boolean isLocationDisplayed(){
+		return true;
+	}
 }

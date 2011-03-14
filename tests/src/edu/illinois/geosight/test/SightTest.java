@@ -31,7 +31,7 @@ public class SightTest extends TestCase {
 	}
 	
 	public void testGetRadius(){
-		assertEquals( sight.getRadius(), 100.0);
+		assertEquals( sight.getRadius(), 20.0);
 	}
 	
 	public void testLogin(){
@@ -43,12 +43,12 @@ public class SightTest extends TestCase {
 	}
 
 	public void testGetName() {
-		assertEquals( sight.getName(), "Siebel Center");
+		assertEquals( sight.getName(), "well");
 	}
 
 	public void testLocation() {
 		GeoPoint p  = sight.getLocation();
-		assertEquals( p.getLatitudeE6(), 40113974);
-		assertEquals( p.getLongitudeE6(), -88224305);
+		assertEquals( p.getLatitudeE6(), (int)(40.1182972222222 * 1e6) );
+		assertEquals( p.getLongitudeE6(), (int)(-88.2436277777778 * 1e6));
 	}
 }

@@ -42,12 +42,21 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 		this.mLocManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 	}
 
-	public static int metersToRadius(double meters, MapView mapview,
-			double latitude) {
+	/**
+	 * Helper function to convert a meter radius to pixels
+	 * @param meters Length in meters of the radius
+	 * @param mapview The mapview to convert to
+	 * @param latitude the current latitude to convert at (radius will depend on latitude)
+	 * @return
+	 */
+	public static int metersToRadius(double meters, MapView mapview, double latitude) {
 		return (int) (mapview.getProjection().metersToEquatorPixels(
 				(float) meters) * (1 / Math.cos(Math.toRadians(latitude))));
 	}
 
+	/**
+	 * Draw all the sights and their radii
+	 */
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
 		// don't draw shadow
 		if (!shadow) {
@@ -84,6 +93,9 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 		return mOverlays.size();
 	}
 
+	/**
+	 * Handle what happens on a balloon tap
+	 */
 	@Override
 	protected boolean onBalloonTap(int index) {
 		Toast.makeText(mContext,

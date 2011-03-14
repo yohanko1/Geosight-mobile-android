@@ -26,7 +26,8 @@ import android.widget.Toast;
 
 /**
  * @author steven
- *
+ * GPS Camera activity handles launching the camera and uploading photos to Geosight
+ * It uses the native camera App, and injects GPS coordinates manually
  */
 public class GPSCameraActivity extends Activity implements LocationListener{
 	
@@ -45,16 +46,29 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		//launchCamera();
 	}
 
+	/**
+	 * Called when activity is hidden
+	 */
 	protected void onPause() {
 		super.onPause();
+		
+		// don't waste battery!
 		turnOffGPS();
 	}
 	
+	/**
+	 * Called when activity is shown
+	 */
 	protected void onResume() {
 		super.onResume();
+		
+		// register GPS locaiton updates
 		turnOnGPS();
 	}
 	
+	/**
+	 * Get the result of the picture taking
+	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	Log.v("CAMERA", "on activity result");
 
@@ -91,6 +105,9 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	}
 
 
+	/**
+	 * Launch native camera application, and inject GPS coordinates
+	 */
 	protected void launchCamera() {
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
@@ -107,11 +124,17 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		startActivityForResult(cameraIntent, CAMERA_ACTIVITY_REQUEST_CODE);
 	}
 	
+	/**
+	 * Gets GPS updates while this activity is active
+	 */
 	public void turnOnGPS(){
 		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, this);
 		//mManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1, this);
 	}
 	
+	/**
+	 * Unregistes GPS updates to conserve battery
+	 */
 	public void turnOffGPS(){
 		mManager.removeUpdates(this);
 	}
