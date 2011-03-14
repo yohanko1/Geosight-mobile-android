@@ -14,8 +14,8 @@
 		</activity>
 
 		<activity android:name="GPSCameraActivity"></activity>
-		<activity android:label="Map View" android:name=".maps.GoogleMapActivity"></activity>>
-		<activity android:name="SightListActivity" android:label="Select a Sight"></activity>>
+		<activity android:label="Map View" android:name=".maps.GoogleMapActivity"></activity>
+		<activity android:name="SightListActivity" android:label="Select a Sight"></activity>
 		
         <uses-library android:name="com.google.android.maps"/>
 	</application>

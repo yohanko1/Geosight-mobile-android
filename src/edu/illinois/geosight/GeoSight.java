@@ -77,7 +77,9 @@ public class GeoSight extends Activity implements OnClickListener {
 		Intent intent = null;
 		
 		if( v.getId() == R.id.CameraPreview){
-			intent = new Intent(this, GPSCameraActivity.class);
+			//intent = new Intent(this, GPSCameraActivity.class);
+			LoginDialog.show(this);
+			return;
 		} else if( v.getId() == R.id.MapButton ){
 			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
 		} else if( v.getId() == R.id.SightsButton ){
