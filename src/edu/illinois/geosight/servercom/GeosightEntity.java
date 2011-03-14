@@ -1,6 +1,12 @@
 package edu.illinois.geosight.servercom;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,12 +16,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -191,6 +199,92 @@ public class GeosightEntity {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new GeosightException(e);
+		}
+	}
+
+	// http://moazzam-khan.com/blog/?tag=android-upload-file
+	public static void uploadImage(File file) {
+		HttpURLConnection connection = null;
+		DataOutputStream outputStream = null;
+		//DataInputStream inputStream = null;
+
+		String urlServer = BASE_URL + "/uploads";
+		String lineEnd = "\r\n";
+		String twoHyphens = "--";
+		
+		// Maybe this should be random...
+		String boundary = "7665267813202";
+
+		int bytesRead, bytesAvailable, bufferSize;
+		byte[] buffer;
+		int maxBufferSize = 1 * 1024 * 1024;
+
+		try {
+			FileInputStream fileInputStream = new FileInputStream(file);
+
+			URL url = new URL(urlServer);
+			connection = (HttpURLConnection) url.openConnection();
+
+			
+			CookieStore cookieStore = (CookieStore) httpContext.getAttribute( ClientContext.COOKIE_STORE );
+			List<Cookie> cookies = cookieStore.getCookies();
+			String cookieString = "";
+			for( Cookie c : cookies ){
+				cookieString += c.getName() + "=" + c.getValue() + ";";
+			}
+			cookieString = cookieString.replaceFirst(";^", "");
+			Log.v("COOKIES", cookieString);
+			
+			
+			
+			// Allow Inputs & Outputs
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setUseCaches(false);
+
+			// Enable POST method
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Connection", "Keep-Alive");
+			connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+			connection.setRequestProperty("Cookie", cookieString);
+
+			outputStream = new DataOutputStream(connection.getOutputStream());
+			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+			outputStream.writeBytes("Content-Disposition: form-data; name=\"temp_photo[file]\"; filename=\""
+							+ file.getName() + "\"" + lineEnd);
+			outputStream.writeBytes("Content-Type: image/jpeg" + lineEnd);
+			
+			outputStream.writeBytes(lineEnd);
+
+			bytesAvailable = fileInputStream.available();
+			bufferSize = Math.min(bytesAvailable, maxBufferSize);
+			buffer = new byte[bufferSize];
+
+			// Read file
+			bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+			while (bytesRead > 0) {
+				outputStream.write(buffer, 0, bufferSize);
+				bytesAvailable = fileInputStream.available();
+				bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+			}
+
+			outputStream.writeBytes(lineEnd);
+			outputStream.writeBytes(twoHyphens + boundary + twoHyphens
+					+ lineEnd);
+
+			// Responses from the server (code and message)
+			//int serverResponseCode = connection.getResponseCode();
+			String serverResponseMessage = connection.getResponseMessage();
+
+			Log.v("UPLOAD", "Message: " + serverResponseMessage);
+			
+			fileInputStream.close();
+			outputStream.flush();
+			outputStream.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	

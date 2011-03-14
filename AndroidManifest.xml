@@ -4,18 +4,22 @@
 	android:versionName="1.0">
 
 
-	<application android:icon="@drawable/icon" android:label="@string/app_name">
+	<application android:theme="@android:style/Theme.Light" android:icon="@drawable/icon" android:label="@string/app_name">
 	
-		<activity android:name=".GeoSight" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+		<activity 
+			android:name=".GeoSight" 
+			android:label="@string/app_name" 
+			android:theme="@android:style/Theme.NoTitleBar"
+			android:configChanges="keyboardHidden|orientation">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
-		<activity android:name="GPSCameraActivity"></activity>
-		<activity android:label="Map View" android:name=".maps.GoogleMapActivity"></activity>
-		<activity android:name="SightListActivity" android:label="Select a Sight"></activity>
+		<activity android:name="GPSCameraActivity" android:configChanges="keyboardHidden|orientation"></activity>
+		<activity android:label="Map View" android:name=".maps.GoogleMapActivity" android:configChanges="keyboardHidden|orientation"></activity>
+		<activity android:name="SightListActivity" android:label="Select a Sight" android:configChanges="keyboardHidden|orientation"></activity>
 		
         <uses-library android:name="com.google.android.maps"/>
         <receiver android:name=".maps.ProximityBroadcastReceiver" />

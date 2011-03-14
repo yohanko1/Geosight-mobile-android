@@ -3,8 +3,6 @@ package edu.illinois.geosight;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +19,7 @@ public class GeoSight extends Activity implements OnClickListener {
 	private Button mapButton;
 	private Button navButton;
 	private Button sightsButton;
+	private Button loginButton;
 	private ImageView mLogo;
 	
     /** Called when the activity is first created. */
@@ -34,6 +33,9 @@ public class GeoSight extends Activity implements OnClickListener {
         setContentView(R.layout.main);
         
         mLogo = (ImageView) findViewById(R.id.logo);
+        
+        loginButton = (Button) findViewById(R.id.LoginButton);
+        loginButton.setOnClickListener(this);
         
         cameraPreview = (Button) findViewById(R.id.CameraPreview);
         cameraPreview.setOnClickListener(this);
@@ -77,7 +79,8 @@ public class GeoSight extends Activity implements OnClickListener {
 		Intent intent = null;
 		
 		if( v.getId() == R.id.CameraPreview){
-			//intent = new Intent(this, GPSCameraActivity.class);
+			intent = new Intent(this, GPSCameraActivity.class);
+		} else if ( v.getId() == R.id.LoginButton ){
 			LoginDialog.show(this);
 			return;
 		} else if( v.getId() == R.id.MapButton ){
@@ -96,12 +99,10 @@ public class GeoSight extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
 	}
 	
 	@Override
-	protected void onPause() { // TODO or onBackPressed()?
+	protected void onPause() {
 		super.onPause();
-		//locationManager.removeUpdates(locationListener);
 	}
 }
