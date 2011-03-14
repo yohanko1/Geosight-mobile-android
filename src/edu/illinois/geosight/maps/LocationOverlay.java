@@ -3,12 +3,14 @@ package edu.illinois.geosight.maps;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.widget.Toast;
@@ -28,14 +30,16 @@ import edu.illinois.geosight.servercom.Sight;
  */
 public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 
+	private static final float CLOSE_THRESHOLD_RADIUS = 1000000; // in meters
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	private ArrayList<Sight> mSights = new ArrayList<Sight>();
 	private Context mContext;
-	private GeoPoint dest;
+	private LocationManager mLocManager;
 
 	public LocationOverlay(Drawable defaultMarker, MapView mapView) {
 		super(boundCenter(defaultMarker), mapView);
 		this.mContext = mapView.getContext();
+		this.mLocManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 	}
 
 	public static int metersToRadius(double meters, MapView mapview,
@@ -87,34 +91,22 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 				Toast.LENGTH_LONG).show();
 
 		Sight currentSight = mSights.get(index);
-		dest = currentSight.getLocation();
+		GeoPoint dest = currentSight.getLocation();
 		float latitude = dest.getLatitudeE6() / (float) 1E6;
 		float longitude = dest.getLongitudeE6() / (float) 1E6;
-
-		runNotificationThread();
 		
+		Intent alertIntent = new Intent(mContext, ProximityBroadcastReceiver.class);
+		PendingIntent proximityIntent = PendingIntent.getBroadcast(
+				mContext.getApplicationContext(), 0, alertIntent, 0);
+		
+		mLocManager.addProximityAlert(
+				latitude, longitude, CLOSE_THRESHOLD_RADIUS, -1,
+				proximityIntent);
+
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(
 				"google.navigation:q=%f,%f", latitude, longitude)));
 		mContext.startActivity(intent);
-		
+
 		return true;
 	}
-
-	private void runNotificationThread() {
-		Thread destNotificationThread = new Thread()
-		{
-			@Override
-			public void run() {
-				try {
-					sleep(1000);
-					// TODO: need gps -> distance formula(heuristic) here...
-					Toast.makeText(mContext, "You are close to destination!", Toast.LENGTH_LONG).show();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		destNotificationThread.run();
-	}
-
 }
