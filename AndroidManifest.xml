@@ -18,6 +18,7 @@
 		<activity android:name="SightListActivity" android:label="Select a Sight"></activity>>
 		
         <uses-library android:name="com.google.android.maps"/>
+        <receiver android:name=".maps.ProximityBroadcastReceiver" />
 	</application>
 
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -26,6 +27,7 @@
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_GPS" /> 
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     
     
 	<uses-feature android:name="android.hardware.camera" />

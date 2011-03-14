@@ -1,12 +1,12 @@
 package edu.illinois.geosight;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -88,5 +88,18 @@ public class GeoSight extends Activity implements OnClickListener {
 			//intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.camera") );
 		}
 		startActivity(intent);
+	}
+	
+	// TODO http://developer.android.com/guide/topics/location/obtaining-user-location.html
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+	}
+	
+	@Override
+	protected void onPause() { // TODO or onBackPressed()?
+		super.onPause();
+		//locationManager.removeUpdates(locationListener);
 	}
 }
