@@ -1,10 +1,13 @@
 package edu.illinois.geosight.servercom;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.json.JSONException;
 
 import android.util.Log;
@@ -31,6 +34,15 @@ public class Sight {
 			throw new GeosightException(e);
 		} catch (java.text.ParseException e) {
 			throw new GeosightException(e);
+		}
+	}
+	
+	public URL getRandomImageUrl(){
+		try {
+			return new URL("http://s3.amazonaws.com/geosight/photos/1/thumb.IMAG0091.jpg?1300647857");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

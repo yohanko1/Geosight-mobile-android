@@ -3,21 +3,34 @@
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
 	android:orientation="horizontal" 
-	android:paddingBottom="35dip"
+	android:paddingBottom="25dip"
 	android:paddingLeft="10dip" 
 	android:minWidth="200dip" 
 	android:id="@+id/balloon_main_layout"
 	android:background="@drawable/balloon_overlay_bg_selector" 
 	android:paddingTop="0dip"
 	android:paddingRight="0dip">
-
+	
 	<LinearLayout 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:orientation="vertical" 
+		android:orientation="horizontal" 
 		android:layout_weight="1"
 		android:paddingTop="10dip" 
 		android:id="@+id/balloon_inner_layout">
+			
+		<edu.illinois.geosight.maps.RemoteImageView 
+			android:id="@+id/remoteImageView"
+			android:layout_width="50dp"
+			android:layout_height="50dp" 
+			android:scaleType="centerCrop" />
+		
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingLeft="5dp"
+			android:orientation="vertical">
+		
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="fill_parent" 
 			android:id="@+id/balloon_item_title"
@@ -29,6 +42,7 @@
 			android:id="@+id/balloon_item_snippet"
 			android:text="balloon_item_snippet" 
 			android:textSize="12dip"></TextView>
+			</LinearLayout>
 	</LinearLayout>
 	
 	<ImageView android:layout_width="wrap_content"

@@ -99,7 +99,7 @@ public abstract class BalloonItemizedOverlay<Item> extends ItemizedOverlay<Overl
 		point = createItem(index).getPoint();
 		
 		if (balloonView == null) {
-			balloonView = new BalloonOverlayView(mapView.getContext(), viewOffset);
+			balloonView = new ImageBalloonOverlayView(mapView.getContext(), viewOffset);
 			clickRegion = (View) balloonView.findViewById(R.id.balloon_inner_layout);
 			isRecycled = false;
 		} else {

@@ -60,8 +60,8 @@ public class GoogleMapActivity extends MapActivity {
 			mSightMarkers = new LocationOverlay(markers, mMapView);
 			for (Sight s : nearSights) {
 				GeoPoint p = s.getLocation();
-				OverlayItem i = new OverlayItem(p, s.getName(), s.toString());
-				mSightMarkers.addOverlay(i, s);
+				SightOverlayItem i = new SightOverlayItem(p, s, s.getName(), s.toString());
+				mSightMarkers.addOverlay(i);
 			}
 			mMapView.getOverlays().add(mSightMarkers);
 		}

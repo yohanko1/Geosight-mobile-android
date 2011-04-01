@@ -31,7 +31,7 @@ import edu.illinois.geosight.servercom.Sight;
 public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 
 	private static final float CLOSE_THRESHOLD_RADIUS = 1000000; // in meters
-	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+	private ArrayList<SightOverlayItem> mOverlays = new ArrayList<SightOverlayItem>();
 	private ArrayList<Sight> mSights = new ArrayList<Sight>();
 	private Context mContext;
 	private LocationManager mLocManager;
@@ -77,9 +77,8 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 		super.draw(canvas, mapView, shadow);
 	}
 
-	public void addOverlay(OverlayItem overlay, Sight currentSight) {
+	public void addOverlay(SightOverlayItem overlay) {
 		mOverlays.add(overlay);
-		mSights.add(currentSight);
 		populate();
 	}
 
@@ -99,10 +98,10 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 	@Override
 	protected boolean onBalloonTap(int index) {
 		Toast.makeText(mContext,
-				"Navigating to " + mSights.get(index).getName(),
+				"Navigating to " + mOverlays.get(index).getTitle(),
 				Toast.LENGTH_LONG).show();
 
-		Sight currentSight = mSights.get(index);
+		Sight currentSight = mOverlays.get(index).getSight();
 		GeoPoint dest = currentSight.getLocation();
 		float latitude = dest.getLatitudeE6() / (float) 1E6;
 		float longitude = dest.getLongitudeE6() / (float) 1E6;
