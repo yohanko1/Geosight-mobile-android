@@ -47,7 +47,7 @@ import com.google.android.maps.GeoPoint;
 public class GeosightEntity {
 	
 	// Base url for all requests on Geosight
-	protected static final String BASE_URL = "http://geosight.heroku.com";
+	protected static final String BASE_URL = "https://geosight.heroku.com";
 	
 	// the http client to use for all requests.  Also handles cookies
 	protected static HttpClient client = null;
@@ -183,7 +183,7 @@ public class GeosightEntity {
 	
 			String str = EntityUtils.toString(response.getEntity());
 			
-			Log.v("JSON", str);
+			Log.v("JSON", "JSON RESULT:" + str + "!");
 			
 			Object temp = new JSONTokener(str).nextValue();
 			changeContext(temp);
@@ -194,7 +194,6 @@ public class GeosightEntity {
 			throw new GeosightException(e);
 		} catch (JSONException e) {
 			e.printStackTrace();
-
 			throw new GeosightException(e);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -301,7 +300,7 @@ public class GeosightEntity {
 		pairs.add( new BasicNameValuePair("user_session[email]", email));
 		pairs.add( new BasicNameValuePair("user_session[password]", password));
 		
-		temp.go("/login.json", Method.POST, pairs);
+		temp.go("/user_sessions", Method.POST, pairs);
 		
 		try {
 			return ! temp.getBoolean("invalid_password");

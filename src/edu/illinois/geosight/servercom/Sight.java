@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.json.JSONException;
 
+import android.util.Log;
+
 import com.google.android.maps.GeoPoint;
 
 public class Sight {
@@ -34,7 +36,7 @@ public class Sight {
 
 	protected Sight(GeosightEntity sight) throws GeosightException {
 		try {
-			populate(sight);
+			populate( sight.getObject("sight") );
 		} catch (JSONException e) {
 			throw new GeosightException(e);
 		} catch (java.text.ParseException e) {
@@ -44,15 +46,11 @@ public class Sight {
 
 	public static List<Sight> getAllSights() throws GeosightException {
 		List<Sight> sights = new ArrayList<Sight>();
-		List<GeosightEntity> allSights = GeosightEntity
-				.jsonArrayFromGet("/sights.json");
-
+		List<GeosightEntity> allSights = GeosightEntity.jsonArrayFromGet("/sights.json");
+		Log.v("JSONSIGHTS", allSights.size() + "" );
+		
 		for (int i = 0; i < allSights.size(); i++) {
-			try {
-				sights.add(new Sight(allSights.get(i).getObject("sight")));
-			} catch (JSONException e) {
-				continue;
-			}
+			sights.add(new Sight(allSights.get(i)));
 		}
 
 		return sights;
