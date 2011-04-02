@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import edu.illinois.geosight.R;
+
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -56,10 +58,14 @@ public class RemoteImageView extends LinearLayout {
 	     }
 	     
 	     protected void onPostExecute(Bitmap bmp) {
-	    	 if( bmp == null) return;
 	    	 bar.setVisibility(GONE);
-		     image.setVisibility(VISIBLE);
-		     image.setImageBitmap(bmp);
+	    	 image.setVisibility(VISIBLE);
+	    	 
+	    	 if( bmp == null){
+	    		 image.setImageResource(R.drawable.error_icon);
+	    	 } else {
+	    		 image.setImageBitmap(bmp);
+	    	 }
 	     }
 	 }
 
