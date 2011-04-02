@@ -11,12 +11,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import edu.illinois.geosight.maps.GoogleMapActivity;
+import edu.illinois.geosight.servercom.User;
 
 /*
  * This is the homescreen activity, which serves as a landing page for the rest of the applicaiton
  */
-public class GeoSight extends Activity implements OnClickListener {
+public class GeoSight extends Activity implements OnClickListener, LoginCallback{
 	
 	// Launch the camera
 	private Button cameraPreview;
@@ -27,6 +29,7 @@ public class GeoSight extends Activity implements OnClickListener {
 	private Button sightsButton;
 	private Button loginButton;
 	private ImageView mLogo;
+	private TextView mStatus;
 	
     /** Called when the activity is first created. */
     @Override
@@ -42,6 +45,7 @@ public class GeoSight extends Activity implements OnClickListener {
         cameraPreview = (Button) findViewById(R.id.CameraPreview);
         mapButton = (Button) findViewById(R.id.MapButton);
         sightsButton = (Button) findViewById(R.id.SightsButton);
+        mStatus = (TextView) findViewById(R.id.homeStatus);
         
         // register the click events for each button
         loginButton.setOnClickListener(this);
@@ -88,7 +92,7 @@ public class GeoSight extends Activity implements OnClickListener {
 		if( v.getId() == R.id.CameraPreview){
 			intent = new Intent(this, GPSCameraActivity.class);
 		} else if ( v.getId() == R.id.LoginButton ){
-			LoginDialog.show(this);
+			LoginDialog.show(this, this);
 			return;
 		} else if( v.getId() == R.id.MapButton ){
 			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
@@ -108,5 +112,10 @@ public class GeoSight extends Activity implements OnClickListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
+	}
+
+	@Override
+	public void onSuccessfulLogin(User user) {
+		mStatus.setText( "Logged in as " + user.getName() );
 	}
 }

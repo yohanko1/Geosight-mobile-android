@@ -1,5 +1,6 @@
 package edu.illinois.geosight.maps;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -11,6 +12,7 @@ import edu.illinois.geosight.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,8 +39,8 @@ public class RemoteImageView extends LinearLayout {
 		(new DownloadImageTask()).execute(url);
 	}
 	
-	 private class DownloadImageTask extends AsyncTask<URL, Integer, Bitmap > {
-	     protected Bitmap doInBackground(URL... urls) {
+	 private class DownloadImageTask extends AsyncTask<URL, Integer, Drawable > {
+	     protected Drawable doInBackground(URL... urls) {
 	    	URL url = urls[0];
 	    	
 	    	try{
@@ -47,9 +49,13 @@ public class RemoteImageView extends LinearLayout {
 		        conn.setDoInput(true);
 		        conn.connect();  
 		        InputStream is = conn.getInputStream();	
-		        Bitmap bm = BitmapFactory.decodeStream(is);  
+		        BufferedInputStream bis = new BufferedInputStream(is);
+		        
+		        //Bitmap bm = BitmapFactory.decodeStream(is);  
+		        Drawable d = Drawable.createFromStream(bis, "");
 		        is.close();  
-		        return bm;
+		        bis.close();
+		        return d;
 			} catch (IOException ex){
 				ex.printStackTrace();
 			}
@@ -57,14 +63,14 @@ public class RemoteImageView extends LinearLayout {
 			return null;
 	     }
 	     
-	     protected void onPostExecute(Bitmap bmp) {
+	     protected void onPostExecute(Drawable d) {
 	    	 bar.setVisibility(GONE);
 	    	 image.setVisibility(VISIBLE);
 	    	 
-	    	 if( bmp == null){
+	    	 if (d == null){
 	    		 image.setImageResource(R.drawable.error_icon);
 	    	 } else {
-	    		 image.setImageBitmap(bmp);
+	    		 image.setImageDrawable(d);
 	    	 }
 	     }
 	 }

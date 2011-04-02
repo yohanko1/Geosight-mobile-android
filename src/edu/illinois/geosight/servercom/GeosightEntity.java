@@ -294,19 +294,26 @@ public class GeosightEntity {
 	 * @return whether the login succeeded
 	 * @throws GeosightException
 	 */
-	public static boolean login(String email, String password) throws GeosightException {	
+	public static User login(String email, String password) {	
 		GeosightEntity temp = new GeosightEntity();
 		List<NameValuePair> pairs = new ArrayList<NameValuePair>(2);
 		pairs.add( new BasicNameValuePair("user_session[email]", email));
 		pairs.add( new BasicNameValuePair("user_session[password]", password));
 		
-		temp.go("/user_sessions", Method.POST, pairs);
+		temp.go("/user_sessions.json", Method.POST, pairs);
 		
-		try {
-			return ! temp.getBoolean("invalid_password");
-		} catch (Exception e) {
-			return false;
+		boolean valid = false;
+		User user = null;
+		try{
+			valid = !temp.getBoolean("invalid_password");
+			if( valid ){
+				user = new User( temp.getObject("record") );
+			}
+		} catch (JSONException ex){
+			return null;
 		}
+		
+		return user;
 	}
 	
 	/**
