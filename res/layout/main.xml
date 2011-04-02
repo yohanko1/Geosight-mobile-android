@@ -23,6 +23,9 @@
 	<Button style="@style/homescreen_button_style" android:id="@+id/MapButton" android:text="MAP"></Button>
 	</LinearLayout>
 
+	<LinearLayout style="@style/homescreen_button_wrapper_style">
+	<Button style="@style/homescreen_button_style" android:id="@+id/GalleryButton" android:text="GALLERY"></Button>
+	</LinearLayout>
      <FrameLayout
          android:layout_width="fill_parent" android:layout_height="fill_parent"
          android:layout_weight="1">

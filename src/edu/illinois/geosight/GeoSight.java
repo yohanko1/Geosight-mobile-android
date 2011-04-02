@@ -85,15 +85,18 @@ public class GeoSight extends Activity implements OnClickListener {
     @Override
 	public void onClick(View v) {
 		Intent intent = null;
-		if( v.getId() == R.id.CameraPreview){
+		int id = v.getId();
+		if( id == R.id.CameraPreview){
 			intent = new Intent(this, GPSCameraActivity.class);
-		} else if ( v.getId() == R.id.LoginButton ){
+		} else if( id == R.id.LoginButton ){
 			LoginDialog.show(this);
 			return;
-		} else if( v.getId() == R.id.MapButton ){
+		} else if( id == R.id.MapButton ){
 			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
-		} else if( v.getId() == R.id.SightsButton ){
+		} else if( id == R.id.SightsButton ){
 			intent = new Intent(GeoSight.this, SightListActivity.class);
+		} else if( id == R.id.GalleryButton) {
+			intent = new Intent(GeoSight.this, GalleryActivity.class);
 		}
 		startActivity(intent);
 	}

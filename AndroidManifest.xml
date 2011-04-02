@@ -20,6 +20,7 @@
 		<activity android:name="GPSCameraActivity" android:configChanges="keyboardHidden|orientation"></activity>
 		<activity android:label="Map View" android:name=".maps.GoogleMapActivity" android:configChanges="keyboardHidden|orientation"></activity>
 		<activity android:name="SightListActivity" android:label="Select a Sight" android:configChanges="keyboardHidden|orientation"></activity>
+		<activity android:name="GalleryActivity" android:label="Select a Sight" android:configChanges="keyboardHidden|orientation"></activity>
 		
         <uses-library android:name="com.google.android.maps"/>
         <receiver android:name=".maps.ProximityBroadcastReceiver" />
