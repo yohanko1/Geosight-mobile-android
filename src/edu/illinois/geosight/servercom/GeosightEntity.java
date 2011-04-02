@@ -161,7 +161,7 @@ public class GeosightEntity {
 	}
 	
 	protected void go(String relativeURL, Method method) throws GeosightException{
-		go( relativeURL, method, null);
+		go( relativeURL, method, null );
 	}
 	
 	protected void go(String relativeURL, Method method, List<NameValuePair> pairs) throws GeosightException{
@@ -207,7 +207,7 @@ public class GeosightEntity {
 		DataOutputStream outputStream = null;
 		//DataInputStream inputStream = null;
 
-		String urlServer = BASE_URL + "/uploads";
+		String urlServer = BASE_URL + "/photos";
 		String lineEnd = "\r\n";
 		String twoHyphens = "--";
 		

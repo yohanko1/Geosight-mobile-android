@@ -32,8 +32,6 @@ public class GoogleMapActivity extends MapActivity {
 		// set up the map view
 		mController = mMapView.getController();
 		mLocOverlay = new MyLocationOverlay(this, mMapView);
-		mLocOverlay.enableMyLocation();
-		mLocOverlay.enableCompass();
 		mMapView.getOverlays().add(mLocOverlay);
 		mMapView.setBuiltInZoomControls(true);
 	}
@@ -41,9 +39,18 @@ public class GoogleMapActivity extends MapActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mLocOverlay.enableMyLocation();
+		mLocOverlay.enableCompass();
 		markCurrentLoc();
 		markNearestSights();
-	};
+	}
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		mLocOverlay.disableMyLocation();
+		mLocOverlay.disableCompass();
+	}
 
 	private void markNearestSights() {
 		List<Sight> nearSights = null;

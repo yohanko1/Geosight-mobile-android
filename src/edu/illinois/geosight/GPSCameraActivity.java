@@ -43,7 +43,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		setContentView(R.layout.gps_camera);
 		
 		mManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-		//launchCamera();
+		launchCamera();
 	}
 
 	/**
@@ -111,8 +111,11 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	protected void launchCamera() {
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
-		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
-		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
+//		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
+//		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
+		
+		values.put(MediaStore.Images.Media.LATITUDE, "40.118" );
+		values.put(MediaStore.Images.Media.LONGITUDE, "-88.24" );
 		
 		//imageUri is the current activity attribute, define and save it for later usage (also in onSaveInstanceState)
 		imageUri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
@@ -146,7 +149,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		//launch the camera on first location fix
 		if( mLocation == null ){
 			mLocation = newLocation;
-			launchCamera();
+			//launchCamera();
 		}
 		mLocation = newLocation;
 	}

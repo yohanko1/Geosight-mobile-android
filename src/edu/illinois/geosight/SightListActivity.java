@@ -67,7 +67,10 @@ public class SightListActivity extends ListActivity {
 	 * @author Steven Kabbes
 	 */
 	 private class DownloadSightsTask extends AsyncTask<Integer, Integer, List<Sight> > {
-	     protected List<Sight> doInBackground(Integer... doesnotmatter) {
+	     /**
+	      * Code which is executed on the background thread
+	      */
+		 protected List<Sight> doInBackground(Integer... doesnotmatter) {
 	    	 try{
 	    		 return Sight.getAllSights();
 	    	 } catch(GeosightException ex){
@@ -75,6 +78,9 @@ public class SightListActivity extends ListActivity {
 	    	 }
 	     }
 	     
+	     /**
+	      * The code which is called on the UI Thread
+	      */
 	     protected void onPostExecute(List<Sight> sights) {
 	    	 if( sights.size() == 0){
 	    		 SightListActivity.this.errorLoadingSights();
