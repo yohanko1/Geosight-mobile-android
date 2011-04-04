@@ -51,7 +51,6 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onPause() {
 		super.onPause();
-		
 		// don't waste battery!
 		turnOffGPS();
 	}
@@ -61,7 +60,6 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onResume() {
 		super.onResume();
-		
 		// register GPS locaiton updates
 		turnOnGPS();
 	}
@@ -99,7 +97,6 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		        GeosightEntity.uploadImage( file );
 		        
 		    }
-		    
 		    finish();
 		}
 	}
@@ -111,9 +108,9 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	protected void launchCamera() {
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
+		// TODO use current location
 //		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
 //		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
-		
 		values.put(MediaStore.Images.Media.LATITUDE, "40.118" );
 		values.put(MediaStore.Images.Media.LONGITUDE, "-88.24" );
 		
@@ -132,7 +129,6 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	public void turnOnGPS(){
 		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, this);
-		//mManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1, this);
 	}
 	
 	/**
@@ -156,19 +152,16 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 
 	@Override
 	public void onProviderDisabled(String arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		// TODO Auto-generated method stub
 		Log.v("GPS Status", arg0);
 	}
 	
