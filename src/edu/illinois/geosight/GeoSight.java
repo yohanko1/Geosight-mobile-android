@@ -11,19 +11,22 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import edu.illinois.geosight.maps.GoogleMapActivity;
+import edu.illinois.geosight.servercom.User;
 
 /*
  * This is the homescreen activity, which serves as a landing page for the rest of the applicaiton
  */
-public class GeoSight extends Activity implements OnClickListener {
+public class GeoSight extends Activity implements OnClickListener, LoginCallback{
 	private ImageView mLogo;
-
+	private TextView mStatus;
+	
 	// Buttons for menu
-	private Button cameraPreview;
-	private Button mapButton;
-	private Button sightsButton;
 	private Button loginButton;
+	private Button cameraPreview;
+	private Button sightsButton;
+	private Button mapButton;
 	private Button galleryButton;
 
 	/** Called when the activity is first created. */
@@ -38,15 +41,15 @@ public class GeoSight extends Activity implements OnClickListener {
 		mLogo = (ImageView) findViewById(R.id.logo);
 		loginButton = (Button) findViewById(R.id.LoginButton);
 		cameraPreview = (Button) findViewById(R.id.CameraPreview);
-		mapButton = (Button) findViewById(R.id.MapButton);
 		sightsButton = (Button) findViewById(R.id.SightsButton);
+		mapButton = (Button) findViewById(R.id.MapButton);
 		galleryButton = (Button) findViewById(R.id.GalleryButton);
 
 		// register the click events for each button
 		loginButton.setOnClickListener(this);
 		cameraPreview.setOnClickListener(this);
-		mapButton.setOnClickListener(this);
 		sightsButton.setOnClickListener(this);
+		mapButton.setOnClickListener(this);
 		galleryButton.setOnClickListener(this);
 
 		// start up the entrance animations
@@ -84,17 +87,18 @@ public class GeoSight extends Activity implements OnClickListener {
 		}
 	}
 
-	/**
-	 * Handle button clicks for the 4 main buttons on the screen
-	 */
-	@Override
+	
+    /**
+     * Handle button clicks for the 4 main buttons on the screen
+     */
+    @Override
 	public void onClick(View v) {
 		Intent intent = null;
 		int id = v.getId();
 		if (id == R.id.CameraPreview) {
 			intent = new Intent(this, GPSCameraActivity.class);
-		} else if (id == R.id.LoginButton) {
-			LoginDialog.show(this);
+		} else if ( v.getId() == R.id.LoginButton ){
+			LoginDialog.show(this, this);
 			return;
 		} else if (id == R.id.MapButton) {
 			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
@@ -116,5 +120,10 @@ public class GeoSight extends Activity implements OnClickListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
+	}
+
+	@Override
+	public void onSuccessfulLogin(User user) {
+		mStatus.setText( "Logged in as " + user.getName() );
 	}
 }

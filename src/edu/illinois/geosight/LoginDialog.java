@@ -1,6 +1,7 @@
 package edu.illinois.geosight;
 
 import edu.illinois.geosight.servercom.GeosightEntity;
+import edu.illinois.geosight.servercom.User;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 
 /**
  * LoginDialog represents a class that can be called from any Activity to 
@@ -22,7 +22,7 @@ public class LoginDialog {
 	 * Shows the login dialog box
 	 * @param ctx The context in which to display the box.
 	 */
-	public static void show(Context ctx){
+	public static void show(Context ctx, final LoginCallback callback){
 		final Dialog d = new Dialog(ctx);
 		d.setContentView(R.layout.login);
 		d.setTitle("Login");
@@ -49,9 +49,11 @@ public class LoginDialog {
 				error.setVisibility(View.INVISIBLE);
 				
 				//Was the login successful?
-				boolean success = GeosightEntity.login(emailTxt.getText().toString(), passwordTxt.getText().toString());
-				if( success ){
+				User user = GeosightEntity.login(emailTxt.getText().toString(), passwordTxt.getText().toString());
+				if( user != null ){
 					d.dismiss();
+					User.current = user;
+					callback.onSuccessfulLogin(user);
 				} else {
 					error.setVisibility(View.VISIBLE);
 				}
