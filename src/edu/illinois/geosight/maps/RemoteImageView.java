@@ -1,6 +1,7 @@
 package edu.illinois.geosight.maps;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -36,11 +37,13 @@ public class RemoteImageView extends LinearLayout {
 	}
 	
 	public void setImageUrl(URL url){
+		image.setVisibility(GONE);
+		bar.setVisibility(VISIBLE);
 		(new DownloadImageTask()).execute(url);
 	}
 	
-	 private class DownloadImageTask extends AsyncTask<URL, Integer, Drawable > {
-	     protected Drawable doInBackground(URL... urls) {
+	 private class DownloadImageTask extends AsyncTask<URL, Integer, Bitmap > {
+	     protected Bitmap doInBackground(URL... urls) {
 	    	URL url = urls[0];
 	    	
 	    	try{
@@ -51,11 +54,22 @@ public class RemoteImageView extends LinearLayout {
 		        InputStream is = conn.getInputStream();	
 		        BufferedInputStream bis = new BufferedInputStream(is);
 		        
-		        //Bitmap bm = BitmapFactory.decodeStream(is);  
-		        Drawable d = Drawable.createFromStream(bis, "");
+		        // fix bug with decoding images from streams
+		        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+		        int result = bis.read();
+		        while(result !=-1)
+		        {
+			        byte b = (byte)result;
+			        buf.write(b);
+			        result = bis.read();
+		        }
+		        byte[] content  = buf.toByteArray();
+		        
+		        Bitmap bm = BitmapFactory.decodeByteArray(content, 0, content.length);  
+		        
 		        is.close();  
 		        bis.close();
-		        return d;
+		        return bm;
 			} catch (IOException ex){
 				ex.printStackTrace();
 			}
@@ -63,14 +77,14 @@ public class RemoteImageView extends LinearLayout {
 			return null;
 	     }
 	     
-	     protected void onPostExecute(Drawable d) {
+	     protected void onPostExecute(Bitmap bmp) {
 	    	 bar.setVisibility(GONE);
 	    	 image.setVisibility(VISIBLE);
 	    	 
-	    	 if (d == null){
+	    	 if (bmp == null){
 	    		 image.setImageResource(R.drawable.error_icon);
 	    	 } else {
-	    		 image.setImageDrawable(d);
+	    		 image.setImageBitmap(bmp);
 	    	 }
 	     }
 	 }

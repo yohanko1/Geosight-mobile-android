@@ -310,7 +310,7 @@ public class GeosightEntity {
 				user = new User( temp.getObject("record") );
 			}
 		} catch (JSONException ex){
-			return null;
+			user = null;
 		}
 		
 		return user;

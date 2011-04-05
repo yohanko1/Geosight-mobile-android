@@ -3,8 +3,8 @@ package edu.illinois.geosight;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -44,7 +44,8 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		sightsButton = (Button) findViewById(R.id.SightsButton);
 		mapButton = (Button) findViewById(R.id.MapButton);
 		galleryButton = (Button) findViewById(R.id.GalleryButton);
-
+		mStatus = (TextView) findViewById(R.id.homeStatus);
+		
 		// register the click events for each button
 		loginButton.setOnClickListener(this);
 		cameraPreview.setOnClickListener(this);

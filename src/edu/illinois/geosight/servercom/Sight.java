@@ -23,6 +23,7 @@ public class Sight {
 	protected Date created_at;
 	protected Date updated_at;
 	protected GeoPoint location;
+	protected String thumb;
 
 	public Sight(long _id) throws GeosightException {
 
@@ -39,7 +40,7 @@ public class Sight {
 	
 	public URL getRandomImageUrl(){
 		try {
-			return new URL("http://s3.amazonaws.com/geosight/photos/1/thumb.IMAG0091.jpg?1300647857");
+			return new URL(thumb);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			return null;
@@ -80,6 +81,7 @@ public class Sight {
 		created_at = sight.getDate("created_at");
 		updated_at = sight.getDate("updated_at");
 		location = sight.getGeoPoint("latitude", "longitude");
+		thumb = sight.getString("thumbnail");
 	}
 
 	public String getName() {
