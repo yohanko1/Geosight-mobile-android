@@ -86,15 +86,9 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		    	Log.v("CAMERA", "Photo was not taken successfully");
 		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_LONG);
 		        
-		        File file = new File("/mnt/sdcard/DCIM/Camera/siebel.jpg");
-		        GeosightEntity.uploadImage( file );
-		        
 		    } else {
 		    	Log.v("CAMERA", "Photo was not taken successfully");
 		        Toast.makeText(this, "Picture was not taken, uploading test image anyway", Toast.LENGTH_LONG);
-		        
-		        File file = new File("/mnt/sdcard/DCIM/Camera/siebel.jpg");
-		        GeosightEntity.uploadImage( file );
 		        
 		    }
 		    finish();
@@ -109,10 +103,12 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
 		// TODO use current location
-//		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
-//		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
-		values.put(MediaStore.Images.Media.LATITUDE, "40.118" );
-		values.put(MediaStore.Images.Media.LONGITUDE, "-88.24" );
+		if( mLocation == null ){
+			mLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
+		
+		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
+		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
 		
 		//imageUri is the current activity attribute, define and save it for later usage (also in onSaveInstanceState)
 		imageUri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);

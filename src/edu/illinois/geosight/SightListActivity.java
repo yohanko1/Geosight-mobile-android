@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.maps.GeoPoint;
 
 import edu.illinois.geosight.maps.GoogleMapActivity;
+import edu.illinois.geosight.maps.ProximityBroadcastReceiver;
 import edu.illinois.geosight.servercom.GeosightException;
 import edu.illinois.geosight.servercom.Sight;
 
@@ -40,12 +43,16 @@ public class SightListActivity extends ListActivity {
 	 * Launch a mapview showing this particular sight
 	 */
 	protected void onListItemClick (ListView l, View v, int position, long id){
-		Sight current = (Sight)l.getItemAtPosition(position);
-		Intent intent = new Intent(SightListActivity.this, GoogleMapActivity.class);
 		
-		GeoPoint loc = current.getLocation();
-		intent.putExtra("latitude", loc.getLatitudeE6() );
-		intent.putExtra("longitude", loc.getLongitudeE6() );
+		Sight current = (Sight)l.getItemAtPosition(position);
+		Toast.makeText(this, "Navigating to " + current.getName(), Toast.LENGTH_LONG).show();
+
+		GeoPoint dest = current.getLocation();
+		float latitude = dest.getLatitudeE6() / (float) 1E6;
+		float longitude = dest.getLongitudeE6() / (float) 1E6;
+		
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(
+				"google.navigation:q=%f,%f", latitude, longitude)));
 		
 		startActivity(intent);
 	}
