@@ -5,7 +5,11 @@ import com.google.android.maps.OverlayItem;
 
 import edu.illinois.geosight.servercom.Sight;
 
-
+/**
+ * Simple wrapper around an Overlay item which also includes a sight
+ * @author Steven Kabbes
+ *
+ */
 public class SightOverlayItem extends OverlayItem {
 	protected  Sight sight;
 	
@@ -14,6 +18,7 @@ public class SightOverlayItem extends OverlayItem {
 		this.sight = sight;
 	}
 	
+	// get the associated sight
 	public Sight getSight(){
 		return sight;
 	}

@@ -36,6 +36,7 @@ public class SightListActivity extends ListActivity {
 		errorView = findViewById(R.id.sightsListError);		
 		loadingView = findViewById(R.id.sightListLoading);
 		
+		//  Asynchronously exectue the download sights task
 		(new DownloadSightsTask()).execute();
 	}
 	

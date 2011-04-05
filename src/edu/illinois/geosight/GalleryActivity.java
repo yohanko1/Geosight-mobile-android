@@ -49,6 +49,7 @@ public class GalleryActivity extends Activity {
 		displayWidth = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay();
 		setGridView();
+		
 		// asynchronous load images
 		loadImages();
 	}
@@ -167,6 +168,7 @@ public class GalleryActivity extends Activity {
 					null, null);
 			int columnIndex = cursor
 					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
+			
 			int size = cursor.getCount();
 		
 			if (size == 0) {

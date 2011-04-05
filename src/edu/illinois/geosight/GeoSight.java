@@ -35,16 +35,10 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		super.onCreate(savedInstanceState);
 		// allows smooth alpha on this window
 		getWindow().setFormat(PixelFormat.RGBA_8888);
+		
 		setContentView(R.layout.main);
 
-		// set up private member variable for the view
-		mLogo = (ImageView) findViewById(R.id.logo);
-		loginButton = (Button) findViewById(R.id.LoginButton);
-		cameraPreview = (Button) findViewById(R.id.CameraPreview);
-		sightsButton = (Button) findViewById(R.id.SightsButton);
-		mapButton = (Button) findViewById(R.id.MapButton);
-		galleryButton = (Button) findViewById(R.id.GalleryButton);
-		mStatus = (TextView) findViewById(R.id.homeStatus);
+		assignViewMembers();
 		
 		// register the click events for each button
 		loginButton.setOnClickListener(this);
@@ -55,7 +49,20 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 
 		// start up the entrance animations
 		startAnimations();
+	}
 
+	/**
+	 * Assigns class members from the view
+	 */
+	private void assignViewMembers() {
+		// set up private member variable for the view
+		mLogo = (ImageView) findViewById(R.id.logo);
+		loginButton = (Button) findViewById(R.id.LoginButton);
+		cameraPreview = (Button) findViewById(R.id.CameraPreview);
+		sightsButton = (Button) findViewById(R.id.SightsButton);
+		mapButton = (Button) findViewById(R.id.MapButton);
+		galleryButton = (Button) findViewById(R.id.GalleryButton);
+		mStatus = (TextView) findViewById(R.id.homeStatus);
 	}
 
 	// Let's go ahead and start the entrance animation for the buttons and logo

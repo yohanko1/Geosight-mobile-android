@@ -21,6 +21,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+/**
+ * View widget which is capable of showing remote images
+ * @author Steven Kabbes
+ *
+ */
 public class RemoteImageView extends LinearLayout {
 	protected ProgressBar bar;
 	protected ImageView image;
@@ -36,18 +41,27 @@ public class RemoteImageView extends LinearLayout {
 		this.addView(image);
 	}
 	
+	/**
+	 * Set the image url associated with this view
+	 * This will consequently download the image in the background
+	 * @param url the url to download an image from
+	 */
 	public void setImageUrl(URL url){
 		image.setVisibility(GONE);
 		bar.setVisibility(VISIBLE);
 		(new DownloadImageTask()).execute(url);
 	}
 	
+	/**
+	 * Private class for downloading images in the background
+	 * @author Steven Kabbes
+	 *
+	 */
 	 private class DownloadImageTask extends AsyncTask<URL, Integer, Bitmap > {
 	     protected Bitmap doInBackground(URL... urls) {
 	    	URL url = urls[0];
 	    	
 	    	try{
-				Log.v("IMaGE", "Setting image: " + url.toExternalForm() );
 		        HttpURLConnection conn = (HttpURLConnection)url.openConnection();  
 		        conn.setDoInput(true);
 		        conn.connect();  
@@ -65,6 +79,7 @@ public class RemoteImageView extends LinearLayout {
 		        }
 		        byte[] content  = buf.toByteArray();
 		        
+		        // decode the bitmap from the stream
 		        Bitmap bm = BitmapFactory.decodeByteArray(content, 0, content.length);  
 		        
 		        is.close();  

@@ -102,7 +102,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	protected void launchCamera() {
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
-		// TODO use current location
+
 		if( mLocation == null ){
 			mLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		}
