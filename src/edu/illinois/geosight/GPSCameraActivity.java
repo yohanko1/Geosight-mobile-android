@@ -79,7 +79,15 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		        Toast.makeText(this, "Picture was taken", Toast.LENGTH_LONG);
 		        
 		        File file = convertImageUriToFile(imageUri, this);
-		        GeosightEntity.uploadImage( file );
+		        
+		        GeosightEntity.uploadImage( file, new ProgressCallback(){					
+					@Override
+					public void onProgress(double progress) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+		        
 		        Toast.makeText(this, "Picture was uploaded", Toast.LENGTH_LONG);
 		        
 		    } else if (resultCode == RESULT_CANCELED) {

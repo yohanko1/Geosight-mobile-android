@@ -160,6 +160,7 @@ public class GalleryActivity extends Activity {
 
 			// Set up an array of the Thumbnail Image ID column we want
 			String[] projection = { MediaStore.Images.Thumbnails._ID };
+			
 			// Create the cursor pointing to the SDCard
 			Cursor cursor = managedQuery(
 					MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,

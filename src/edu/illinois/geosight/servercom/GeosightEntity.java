@@ -1,6 +1,5 @@
 package edu.illinois.geosight.servercom;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +14,6 @@ import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -38,6 +36,8 @@ import org.json.JSONTokener;
 import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
+
+import edu.illinois.geosight.ProgressCallback;
 
 /**
  * The GeosightEntity class handles JSON retrieval from both POST and GET methods and 
@@ -200,9 +200,13 @@ public class GeosightEntity {
 			throw new GeosightException(e);
 		}
 	}
+	
+	public static void uploadImage(File file) {
+		uploadImage(file, null);
+	}
 
 	// http://moazzam-khan.com/blog/?tag=android-upload-file
-	public static void uploadImage(File file) {
+	public static void uploadImage(File file, ProgressCallback progress) {
 		HttpURLConnection connection = null;
 		DataOutputStream outputStream = null;
 		//DataInputStream inputStream = null;
@@ -216,7 +220,7 @@ public class GeosightEntity {
 
 		int bytesRead, bytesAvailable, bufferSize;
 		byte[] buffer;
-		int maxBufferSize = 1 * 1024 * 1024;
+		int maxBufferSize = 100 * 1024;
 
 		try {
 			FileInputStream fileInputStream = new FileInputStream(file);
@@ -249,13 +253,17 @@ public class GeosightEntity {
 
 			outputStream = new DataOutputStream(connection.getOutputStream());
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-			outputStream.writeBytes("Content-Disposition: form-data; name=\"temp_photo[file]\"; filename=\""
+			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[file]\"; filename=\""
 							+ file.getName() + "\"" + lineEnd);
 			outputStream.writeBytes("Content-Type: image/jpeg" + lineEnd);
 			
 			outputStream.writeBytes(lineEnd);
 
 			bytesAvailable = fileInputStream.available();
+			
+			int bytesTotal = bytesAvailable;
+			int bytesSent = 0;
+			
 			bufferSize = Math.min(bytesAvailable, maxBufferSize);
 			buffer = new byte[bufferSize];
 
@@ -264,10 +272,19 @@ public class GeosightEntity {
 
 			while (bytesRead > 0) {
 				outputStream.write(buffer, 0, bufferSize);
+				
+				bytesSent += bufferSize;
+				
+				if( progress != null ){
+					progress.onProgress( bytesSent / bytesTotal );
+				}
+				
 				bytesAvailable = fileInputStream.available();
 				bufferSize = Math.min(bytesAvailable, maxBufferSize);
 				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 			}
+			
+			progress.onProgress(1.0);
 
 			outputStream.writeBytes(lineEnd);
 			outputStream.writeBytes(twoHyphens + boundary + twoHyphens

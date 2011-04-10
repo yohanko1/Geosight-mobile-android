@@ -21,6 +21,7 @@
 		<activity android:name=".maps.GoogleMapActivity" android:label="Map View"  android:configChanges="keyboardHidden|orientation"></activity>
 		<activity android:name="SightListActivity" android:label="Select a Sight" android:configChanges="keyboardHidden|orientation"></activity>
 		<activity android:name="GalleryActivity" android:label="View Geotagged Pictures" android:configChanges="keyboardHidden|orientation"></activity>
+		<activity android:name="UploadActivity" android:label="Upload a Photo" android:configChanges="keyboardHidden|orientation"></activity>
 		
         <uses-library android:name="com.google.android.maps"/>
         <receiver android:name=".maps.ProximityBroadcastReceiver" />
