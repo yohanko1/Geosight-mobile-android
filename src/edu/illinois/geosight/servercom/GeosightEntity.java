@@ -253,13 +253,6 @@ public class GeosightEntity {
 			connection.setRequestProperty("Cookie", cookieString);
 
 			outputStream = new DataOutputStream(connection.getOutputStream());
-			//inputStream = new DataInputStream( connection.getInputStream() );
-			
-			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[user_id]\"" + lineEnd);
-			outputStream.writeBytes(lineEnd);
-			outputStream.writeBytes( "2" );
-			outputStream.writeBytes(lineEnd + twoHyphens + boundary + twoHyphens + lineEnd);
 			
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[file]\"; filename=\""
