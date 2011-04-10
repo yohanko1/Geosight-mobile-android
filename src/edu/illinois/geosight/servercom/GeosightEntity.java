@@ -1,5 +1,6 @@
 package edu.illinois.geosight.servercom;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -211,7 +212,7 @@ public class GeosightEntity {
 		DataOutputStream outputStream = null;
 		//DataInputStream inputStream = null;
 
-		String urlServer = BASE_URL + "/photos";
+		String urlServer = BASE_URL + "/photos.json";
 		String lineEnd = "\r\n";
 		String twoHyphens = "--";
 		
@@ -252,14 +253,13 @@ public class GeosightEntity {
 			connection.setRequestProperty("Cookie", cookieString);
 
 			outputStream = new DataOutputStream(connection.getOutputStream());
-			
+			//inputStream = new DataInputStream( connection.getInputStream() );
 			
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[user_id]\"" + lineEnd);
 			outputStream.writeBytes(lineEnd);
-			outputStream.writeBytes( "" + User.current.getId() );
-			outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-			
+			outputStream.writeBytes( "2" );
+			outputStream.writeBytes(lineEnd + twoHyphens + boundary + twoHyphens + lineEnd);
 			
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[file]\"; filename=\""
@@ -308,6 +308,8 @@ public class GeosightEntity {
 			fileInputStream.close();
 			outputStream.flush();
 			outputStream.close();
+			
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

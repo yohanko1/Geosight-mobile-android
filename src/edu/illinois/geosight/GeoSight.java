@@ -118,10 +118,12 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		} else if (id == R.id.GalleryButton) {
 			intent = new Intent(GeoSight.this, GalleryActivity.class);
 		} else if ( id == R.id.UploadTestButton ){
+			
 			intent = new Intent(GeoSight.this, UploadActivity.class);
 			Bundle bundle = new Bundle();
 			bundle.putString("image", "/mnt/asec/photo1.jpg");
 			intent.putExtras(bundle);
+			
 		}
 		startActivity(intent);
 	}

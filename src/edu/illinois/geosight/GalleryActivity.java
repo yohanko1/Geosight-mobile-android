@@ -47,8 +47,7 @@ public class GalleryActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setProgressBarIndeterminateVisibility(true);
 		setContentView(R.layout.sdcard);
-		displayWidth = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-				.getDefaultDisplay();
+		displayWidth = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		setGridView();
 		
 		// asynchronous load images
@@ -183,16 +182,13 @@ public class GalleryActivity extends Activity {
 					imageID = cursor.getInt(columnIndex);
 					try {
 						// check if the image is geotagged. don't display if it's not.
-						if (isGeotagged(getRealPathFromURI(Uri
-								.withAppendedPath(
-										MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-										"" + imageID)))) {
-							bitmap = BitmapFactory
-									.decodeStream(getContentResolver()
-											.openInputStream(
-													Uri.withAppendedPath(
+						if (isGeotagged(getRealPathFromURI(
+								Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + imageID)))) {
+							bitmap = BitmapFactory.decodeStream(getContentResolver()
+											.openInputStream( Uri.withAppendedPath(
 															MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
 															"" + imageID)));
+							
 							if (bitmap != null) {
 								newBitmap = Bitmap.createScaledBitmap(bitmap,
 										70, 70, true);

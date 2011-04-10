@@ -22,10 +22,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class UploadActivity extends Activity implements OnClickListener {
+	
 	private ImageView mImg;
 	private ProgressBar mProgress;
 	private Button mUploadButton;
 	private Button mCancelButton;
+	
 	private UploadImageTask uploadTask = new UploadImageTask();
 	private String imagePath;
 	
