@@ -51,4 +51,8 @@ public class User {
 	public String getName() {
 		return first_name + " " + last_name;
 	}
+	
+	public long getId(){
+		return id;
+	}
 }

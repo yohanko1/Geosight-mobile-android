@@ -252,6 +252,15 @@ public class GeosightEntity {
 			connection.setRequestProperty("Cookie", cookieString);
 
 			outputStream = new DataOutputStream(connection.getOutputStream());
+			
+			
+			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[user_id]\"" + lineEnd);
+			outputStream.writeBytes(lineEnd);
+			outputStream.writeBytes( "" + User.current.getId() );
+			outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+			
+			
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 			outputStream.writeBytes("Content-Disposition: form-data; name=\"photo[file]\"; filename=\""
 							+ file.getName() + "\"" + lineEnd);
@@ -276,7 +285,7 @@ public class GeosightEntity {
 				bytesSent += bufferSize;
 				
 				if( progress != null ){
-					progress.onProgress( bytesSent / bytesTotal );
+					progress.onProgress( bytesSent / (double)bytesTotal );
 				}
 				
 				bytesAvailable = fileInputStream.available();

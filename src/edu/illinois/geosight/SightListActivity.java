@@ -77,6 +77,7 @@ public class SightListActivity extends ListActivity {
 	    	 try{
 	    		 return Sight.getAllSights();
 	    	 } catch(GeosightException ex){
+	    		 ex.printStackTrace();
 	    		 return new ArrayList<Sight>();
 	    	 }
 	     }

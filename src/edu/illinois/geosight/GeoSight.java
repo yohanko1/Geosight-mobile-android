@@ -28,6 +28,7 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 	private Button sightsButton;
 	private Button mapButton;
 	private Button galleryButton;
+	private Button uploadButton;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -46,6 +47,7 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		sightsButton.setOnClickListener(this);
 		mapButton.setOnClickListener(this);
 		galleryButton.setOnClickListener(this);
+		uploadButton.setOnClickListener(this);
 
 		// start up the entrance animations
 		startAnimations();
@@ -63,6 +65,7 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		mapButton = (Button) findViewById(R.id.MapButton);
 		galleryButton = (Button) findViewById(R.id.GalleryButton);
 		mStatus = (TextView) findViewById(R.id.homeStatus);
+		uploadButton = (Button) findViewById( R.id.UploadTestButton );
 	}
 
 	// Let's go ahead and start the entrance animation for the buttons and logo
@@ -113,10 +116,11 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		} else if (id == R.id.SightsButton) {
 			intent = new Intent(GeoSight.this, SightListActivity.class);
 		} else if (id == R.id.GalleryButton) {
-			//intent = new Intent(GeoSight.this, GalleryActivity.class);
+			intent = new Intent(GeoSight.this, GalleryActivity.class);
+		} else if ( id == R.id.UploadTestButton ){
 			intent = new Intent(GeoSight.this, UploadActivity.class);
 			Bundle bundle = new Bundle();
-			bundle.putString("image", "/mnt/asec/photo3.jpg");
+			bundle.putString("image", "/mnt/asec/photo1.jpg");
 			intent.putExtras(bundle);
 		}
 		startActivity(intent);

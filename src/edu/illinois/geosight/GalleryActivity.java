@@ -39,7 +39,8 @@ public class GalleryActivity extends Activity {
 	private Display displayWidth;
 	private ImageAdapter ia;
 	private GridView img;
-
+	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,11 +71,11 @@ public class GalleryActivity extends Activity {
 	private void loadImages() {
 		final Object data = getLastNonConfigurationInstance();
 		if (data == null) {
-			new LoadImagesFromSDCard().execute();
+			loadImagesTask.execute();
 		} else {
 			final Bitmap[] photos = (Bitmap[]) data;
 			if (photos.length == 0) {
-				new LoadImagesFromSDCard().execute();
+				loadImagesTask.execute();
 			}
 			for (Bitmap photo : photos) {
 				addImage(photo);

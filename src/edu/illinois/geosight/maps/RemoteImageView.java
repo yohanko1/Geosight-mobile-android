@@ -47,9 +47,11 @@ public class RemoteImageView extends LinearLayout {
 	 * @param url the url to download an image from
 	 */
 	public void setImageUrl(URL url){
-		image.setVisibility(GONE);
-		bar.setVisibility(VISIBLE);
-		(new DownloadImageTask()).execute(url);
+		if( url != null ){
+			image.setVisibility(GONE);
+			bar.setVisibility(VISIBLE);
+			(new DownloadImageTask()).execute(url);
+		}
 	}
 	
 	/**

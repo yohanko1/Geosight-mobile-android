@@ -30,7 +30,7 @@ public class Sight {
 		GeosightEntity sight = GeosightEntity.jsonFromGet(String.format("/sights/%d.json", _id));
 
 		try {
-			populate( sight.getObject("sight") );
+			populate( sight );
 		} catch (JSONException e) {
 			throw new GeosightException(e);
 		} catch (java.text.ParseException e) {
@@ -49,7 +49,7 @@ public class Sight {
 
 	protected Sight(GeosightEntity sight) throws GeosightException {
 		try {
-			populate( sight.getObject("sight") );
+			populate( sight );
 		} catch (JSONException e) {
 			throw new GeosightException(e);
 		} catch (java.text.ParseException e) {
@@ -78,10 +78,13 @@ public class Sight {
 		user_id = sight.getLong("user_id");
 		name = sight.getString("name");
 		radius = sight.getDouble("radius");
-		created_at = sight.getDate("created_at");
-		updated_at = sight.getDate("updated_at");
+		//created_at = sight.getDate("created_at");
+		//updated_at = sight.getDate("updated_at");
 		location = sight.getGeoPoint("latitude", "longitude");
-		thumb = sight.getString("thumbnail");
+		
+		if( sight.jObj.has("thumbnail") ){
+			thumb = sight.getString("thumbnail");
+		}
 	}
 
 	public String getName() {
