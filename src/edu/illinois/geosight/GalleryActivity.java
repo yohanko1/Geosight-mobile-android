@@ -1,5 +1,6 @@
 package edu.illinois.geosight;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -15,16 +16,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+import edu.illinois.geosight.servercom.GeosightEntity;
 
 /**
  * 
@@ -33,35 +37,81 @@ import android.widget.Toast;
  * @author Yo Han
  * 
  */
-public class GalleryActivity extends Activity {
+public class GalleryActivity extends Activity implements OnClickListener {
 
-	private static final int GRID_COLUMN_WIDTH = 90;
-	private Display displayWidth;
 	private ImageAdapter ia;
 	private GridView img;
 	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
-	
+	private UploadImageTask uploadTask = new UploadImageTask();
+	private ArrayList<String> imgPaths = new ArrayList<String>();
+
+	private Gallery mGallery;
+	private ImageView mImg;
+	private ProgressBar mProgress;
+	private Button mUploadButton;
+	private Button mCancelButton;
+
+	private String currentImgPath;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setProgressBarIndeterminateVisibility(true);
-		setContentView(R.layout.sdcard);
-		displayWidth = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		setGridView();
-		
-		// asynchronous load images
+
+		setContentView(R.layout.gallery);
+		setView();
+
+		mGallery.setOnItemClickListener(new OnItemClickListener() {
+			Bitmap bm = null;
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (bm != null)
+					bm.recycle();
+				currentImgPath = imgPaths.get(position);
+				bm = BitmapFactory.decodeFile(currentImgPath);
+				mImg.setImageBitmap(bm);
+			}
+
+		});
+
 		loadImages();
+		// old gallery code
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		// setProgressBarIndeterminateVisibility(true);
+		// displayWidth = ((WindowManager)
+		// getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		// setGridView();
+
+		// asynchronous load images
+		// loadImages();
 	}
 
-	/**
-	 * Setup the grid view.
-	 */
-	private void setGridView() {
-		img = (GridView) findViewById(R.id.sdcard_img);
-		img.setNumColumns(displayWidth.getWidth() / GRID_COLUMN_WIDTH);
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		if (id == R.id.galleryUploadButton) {
+			mProgress.setVisibility(View.VISIBLE);
+			mUploadButton.setEnabled(false);
+			uploadTask.execute(new File(currentImgPath));
+		} else if (id == R.id.galleryCancelButton) {
+			// uploadTask.cancel(true);
+			finish();
+		}
+	}
+
+	private void setView() {
+		mGallery = (Gallery) findViewById(R.id.gallery);
+		mImg = (ImageView) findViewById(R.id.galleryImage);
+		mProgress = (ProgressBar) findViewById(R.id.galleryUploadProgress);
+		mUploadButton = (Button) findViewById(R.id.galleryUploadButton);
+		mCancelButton = (Button) findViewById(R.id.galleryCancelButton);
+
 		ia = new ImageAdapter(getApplicationContext());
-		img.setAdapter(ia);
+		mGallery.setAdapter(ia);
+
+		mUploadButton.setOnClickListener(this);
+		mCancelButton.setOnClickListener(this);
 	}
 
 	/**
@@ -85,7 +135,8 @@ public class GalleryActivity extends Activity {
 	/**
 	 * Add image(s) to the grid view adapter.
 	 * 
-	 * @param value Array of LoadedImages references
+	 * @param value
+	 *            Array of LoadedImages references
 	 */
 	private void addImage(Bitmap... value) {
 		for (Bitmap image : value) {
@@ -136,15 +187,18 @@ public class GalleryActivity extends Activity {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			final ImageView imageView;
+			final ImageView imgView;
 			if (convertView == null) {
-				imageView = new ImageView(mContext);
+				imgView = new ImageView(mContext);
 			} else {
-				imageView = (ImageView) convertView;
+				imgView = (ImageView) convertView;
 			}
-			imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-			imageView.setImageBitmap(photos.get(position));
-			return imageView;
+			imgView.setImageBitmap(photos.get(position));
+			return imgView;
+		}
+
+		public ArrayList<Bitmap> getPhotos() {
+			return photos;
 		}
 	}
 
@@ -153,6 +207,8 @@ public class GalleryActivity extends Activity {
 	 */
 	class LoadImagesFromSDCard extends AsyncTask<Object, Bitmap, Object> {
 
+		private static final int THUMBNAIL_DIMENSION = 70;
+
 		@Override
 		protected Object doInBackground(Object... params) {
 			Bitmap bitmap = null;
@@ -160,7 +216,7 @@ public class GalleryActivity extends Activity {
 
 			// Set up an array of the Thumbnail Image ID column we want
 			String[] projection = { MediaStore.Images.Thumbnails._ID };
-			
+
 			// Create the cursor pointing to the SDCard
 			Cursor cursor = managedQuery(
 					MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
@@ -169,9 +225,9 @@ public class GalleryActivity extends Activity {
 					null, null);
 			int columnIndex = cursor
 					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
-			
+
 			int size = cursor.getCount();
-		
+
 			if (size == 0) {
 				Toast.makeText(getApplicationContext(), "No image avaiable",
 						Toast.LENGTH_LONG).show();
@@ -181,17 +237,23 @@ public class GalleryActivity extends Activity {
 					cursor.moveToPosition(i);
 					imageID = cursor.getInt(columnIndex);
 					try {
-						// check if the image is geotagged. don't display if it's not.
-						if (isGeotagged(getRealPathFromURI(
-								Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + imageID)))) {
-							bitmap = BitmapFactory.decodeStream(getContentResolver()
-											.openInputStream( Uri.withAppendedPath(
-															MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-															"" + imageID)));
-							
+						// check if the image is geotagged.
+						// don't display thumbnail if it's not.
+						String imgFilepath = getRealPathFromURI(getUri(
+								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+								imageID));
+						if (isGeotagged(imgFilepath)) {
+							imgPaths.add(imgFilepath);
+							bitmap = BitmapFactory
+									.decodeStream(getContentResolver()
+											.openInputStream(
+													getUri(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
+															imageID)));
+
 							if (bitmap != null) {
 								newBitmap = Bitmap.createScaledBitmap(bitmap,
-										70, 70, true);
+										THUMBNAIL_DIMENSION,
+										THUMBNAIL_DIMENSION, true);
 								bitmap.recycle();
 								if (newBitmap != null) {
 									publishProgress(newBitmap);
@@ -215,11 +277,50 @@ public class GalleryActivity extends Activity {
 		protected void onPostExecute(Object result) {
 			setProgressBarIndeterminateVisibility(false);
 		}
+
+		private Uri getUri(Uri type, int imageID) {
+			return Uri.withAppendedPath(type, "" + imageID);
+		}
+
+	}
+
+	/**
+	 * Asynchronous task for loading the images from the SD card.
+	 */
+	private class UploadImageTask extends AsyncTask<File, Double, Object> {
+
+		@Override
+		protected Object doInBackground(File... files) {
+			GeosightEntity.uploadImage(files[0], new ProgressCallback() {
+				@Override
+				public void onProgress(double progress) {
+					publishProgress(progress * 100);
+				}
+			});
+
+			return null;
+		}
+
+		@Override
+		public void onProgressUpdate(Double... progress) {
+			for (int i = 0; i < progress.length; i++) {
+				Log.v("ASDF", "" + progress[i].intValue());
+				mProgress.setProgress(progress[i].intValue());
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Object result) {
+			Toast.makeText(GalleryActivity.this, "Upload Complete",
+					Toast.LENGTH_LONG).show();
+		}
 	}
 
 	/**
 	 * Gets the filepath from uri
-	 * @param contentUri target path
+	 * 
+	 * @param contentUri
+	 *            target path
 	 * @return path corresponding to uri; null if uri is invalid
 	 */
 	public String getRealPathFromURI(Uri contentUri) {
@@ -243,9 +344,12 @@ public class GalleryActivity extends Activity {
 
 	/**
 	 * Check if given image on filepath is geotagged.
-	 * @param filepath path to the file
+	 * 
+	 * @param filepath
+	 *            path to the file
 	 * @return true if it contains both latitude and longitude. false otherwise
-	 * @throws IOException thrown when file doens't exist at filepath
+	 * @throws IOException
+	 *             thrown when file doens't exist at filepath
 	 */
 	public boolean isGeotagged(String filepath) throws IOException {
 		if (filepath != null) {

@@ -1,16 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="#8e8e8e" >
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+	<Gallery android:id="@+id/gallery" 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scaleType="centerCrop" >
+	</Gallery>
 
-<Gallery 
-	android:id="@+id/Gallery01" 
-	android:layout_width="fill_parent" 
-	android:layout_height="wrap_content"></Gallery>
-<ImageView 
-	android:id="@+id/ImageView01" 
-	android:layout_width="wrap_content" 
-	android:layout_height="wrap_content"></ImageView>
-</LinearLayout>
+	<ImageView android:id="@+id/galleryImage"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		 >
+	</ImageView>
+	</LinearLayout>
+
+	<ProgressBar android:id="@+id/galleryUploadProgress"
+		android:layout_width="match_parent" android:layout_height="wrap_content"
+		android:indeterminate="false" android:visibility="gone"
+		style="?android:attr/progressBarStyleHorizontal" android:progress="0"
+		android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
+		android:layout_centerInParent="true" android:max="100" />
+
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal"
+		android:layout_alignParentBottom="true">
+		
+		<Button android:id="@+id/galleryUploadButton" android:layout_weight="1"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="Upload" />
+		<Button android:id="@+id/galleryCancelButton" android:layout_weight="1"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="Cancel" />
+	</LinearLayout>
+
+</RelativeLayout>
