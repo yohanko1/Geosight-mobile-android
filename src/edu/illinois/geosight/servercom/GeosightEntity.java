@@ -300,9 +300,9 @@ public class GeosightEntity {
 
 			// Responses from the server (code and message)
 			//int serverResponseCode = connection.getResponseCode();
-			String serverResponseMessage = connection.getResponseMessage();
+			//String serverResponseMessage = connection.getResponseMessage();
 
-			Log.v("UPLOAD", "Message: " + serverResponseMessage);
+			Log.v("UPLOAD", "Message: upload complete");
 			
 			fileInputStream.close();
 			outputStream.flush();

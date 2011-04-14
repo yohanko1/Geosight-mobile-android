@@ -3,23 +3,21 @@ package edu.illinois.geosight;
 import java.io.File;
 import java.io.IOException;
 
-import edu.illinois.geosight.servercom.GeosightEntity;
-
 import android.app.Activity;
-import android.database.Cursor;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import edu.illinois.geosight.servercom.GeosightEntity;
 
 public class UploadActivity extends Activity implements OnClickListener {
 	
@@ -27,6 +25,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 	private ProgressBar mProgress;
 	private Button mUploadButton;
 	private Button mCancelButton;
+	private View mWrapper;
 	
 	private UploadImageTask uploadTask = new UploadImageTask();
 	private String imagePath;
@@ -44,7 +43,10 @@ public class UploadActivity extends Activity implements OnClickListener {
 			imagePath = bundle.getString("image");
 			Bitmap bmp = null;
 			try {
-				bmp = (new BitmapScaler(new File(imagePath), 500)).getScaled();
+				Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+				int width = display.getWidth();
+				
+				bmp = (new BitmapScaler(new File(imagePath), width)).getScaled();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -62,6 +64,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
 		mUploadButton = (Button) findViewById( R.id.uploadButton );
 		mCancelButton = (Button) findViewById( R.id.cancelButton );
+		mWrapper = findViewById( R.id.uploadImageWrapper );
 		
 		mUploadButton.setOnClickListener( this );
 		mCancelButton.setOnClickListener( this );
