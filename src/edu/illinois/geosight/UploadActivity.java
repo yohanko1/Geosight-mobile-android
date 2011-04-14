@@ -42,7 +42,13 @@ public class UploadActivity extends Activity implements OnClickListener {
 		
 		if( bundle != null ){
 			imagePath = bundle.getString("image");
-			Bitmap bmp = BitmapFactory.decodeFile( imagePath );
+			Bitmap bmp = null;
+			try {
+				bmp = (new BitmapScaler(new File(imagePath), 500)).getScaled();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			mImg.setImageBitmap( bmp );
 		}
 	}

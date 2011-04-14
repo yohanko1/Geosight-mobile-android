@@ -68,7 +68,12 @@ public class GalleryActivity extends Activity implements OnClickListener {
 				if (bm != null)
 					bm.recycle();
 				currentImgPath = imgPaths.get(position);
-				bm = BitmapFactory.decodeFile(currentImgPath);
+				try {
+					bm = new BitmapScaler(new File(currentImgPath), 500).getScaled();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+//				bm = BitmapFactory.decodeFile(currentImgPath);
 				mImg.setImageBitmap(bm);
 			}
 
