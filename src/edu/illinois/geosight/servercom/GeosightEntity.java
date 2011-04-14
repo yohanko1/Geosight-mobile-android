@@ -23,6 +23,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
+
+import org.apache.http.entity.FileEntity;
+
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -206,6 +209,7 @@ public class GeosightEntity {
 		uploadImage(file, null);
 	}
 
+
 	// http://moazzam-khan.com/blog/?tag=android-upload-file
 	public static void uploadImage(File file, ProgressCallback progress) {
 		HttpURLConnection connection = null;
@@ -228,7 +232,7 @@ public class GeosightEntity {
 
 			URL url = new URL(urlServer);
 			connection = (HttpURLConnection) url.openConnection();
-
+			connection.setChunkedStreamingMode(0);
 			
 			CookieStore cookieStore = (CookieStore) httpContext.getAttribute( ClientContext.COOKIE_STORE );
 			List<Cookie> cookies = cookieStore.getCookies();
@@ -252,6 +256,7 @@ public class GeosightEntity {
 			connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 			connection.setRequestProperty("Cookie", cookieString);
 
+
 			outputStream = new DataOutputStream(connection.getOutputStream());
 			
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
@@ -274,6 +279,7 @@ public class GeosightEntity {
 
 			while (bytesRead > 0) {
 				outputStream.write(buffer, 0, bufferSize);
+				outputStream.flush();
 				
 				bytesSent += bufferSize;
 				

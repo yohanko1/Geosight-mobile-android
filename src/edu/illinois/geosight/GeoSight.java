@@ -121,7 +121,7 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 			
 			intent = new Intent(GeoSight.this, UploadActivity.class);
 			Bundle bundle = new Bundle();
-			bundle.putString("image", "/mnt/asec/photo1.jpg");
+			bundle.putString("image", "/mnt/asec/file1.jpg");
 			intent.putExtras(bundle);
 			
 		}
