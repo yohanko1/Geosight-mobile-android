@@ -228,7 +228,7 @@ public class GeosightEntity {
 
 			URL url = new URL(urlServer);
 			connection = (HttpURLConnection) url.openConnection();
-
+//			connection.setChunkedStreamingMode(1024);
 			
 			CookieStore cookieStore = (CookieStore) httpContext.getAttribute( ClientContext.COOKIE_STORE );
 			List<Cookie> cookies = cookieStore.getCookies();
@@ -274,6 +274,7 @@ public class GeosightEntity {
 
 			while (bytesRead > 0) {
 				outputStream.write(buffer, 0, bufferSize);
+				outputStream.flush();
 				
 				bytesSent += bufferSize;
 				

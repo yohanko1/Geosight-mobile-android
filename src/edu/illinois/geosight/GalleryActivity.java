@@ -40,7 +40,6 @@ import edu.illinois.geosight.servercom.GeosightEntity;
 public class GalleryActivity extends Activity implements OnClickListener {
 
 	private ImageAdapter ia;
-	private GridView img;
 	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
 	private UploadImageTask uploadTask = new UploadImageTask();
 	private ArrayList<String> imgPaths = new ArrayList<String>();
@@ -145,19 +144,6 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		final GridView grid = img;
-		final int count = grid.getChildCount();
-		final Bitmap[] list = new Bitmap[count];
-
-		for (int i = 0; i < count; i++) {
-			final ImageView v = (ImageView) grid.getChildAt(i);
-			list[i] = (Bitmap) ((BitmapDrawable) v.getDrawable()).getBitmap();
-		}
-		return list;
-	}
-
 	/**
 	 * Adapter for image files.
 	 */
@@ -194,6 +180,8 @@ public class GalleryActivity extends Activity implements OnClickListener {
 				imgView = (ImageView) convertView;
 			}
 			imgView.setImageBitmap(photos.get(position));
+			imgView.setLayoutParams(new Gallery.LayoutParams(150, 120));
+			imgView.setAdjustViewBounds(true);
 			return imgView;
 		}
 
@@ -214,41 +202,46 @@ public class GalleryActivity extends Activity implements OnClickListener {
 			Bitmap bitmap = null;
 			Bitmap newBitmap = null;
 
-			// Set up an array of the Thumbnail Image ID column we want
-			String[] projection = { MediaStore.Images.Thumbnails._ID };
+			String[] projection = { MediaStore.Images.Thumbnails._ID, MediaStore.Images.Thumbnails.IMAGE_ID };
 
 			// Create the cursor pointing to the SDCard
 			Cursor cursor = managedQuery(
 					MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
 					projection, // Which columns to return
-					null, // Return all rows
-					null, null);
-			int columnIndex = cursor
-					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
-
+					null, 		// Return all rows
+					null, 
+					null);
+			int imgIndex = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID);
+			int thumIndex = cursor
+			.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
 			int size = cursor.getCount();
 
 			if (size == 0) {
 				Toast.makeText(getApplicationContext(), "No image avaiable",
 						Toast.LENGTH_LONG).show();
 			} else {
-				int imageID = 0;
+				int imageID = 0, thumbID = 0;
 				for (int i = 0; i < size; i++) {
 					cursor.moveToPosition(i);
-					imageID = cursor.getInt(columnIndex);
+					imageID = cursor.getInt(imgIndex);
+					thumbID = cursor.getInt(thumIndex);
 					try {
 						// check if the image is geotagged.
 						// don't display thumbnail if it's not.
 						String imgFilepath = getRealPathFromURI(getUri(
 								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 								imageID));
-						if (isGeotagged(imgFilepath)) {
-							imgPaths.add(imgFilepath);
+						if (imgFilepath == null)
+							continue;
+						
+						if (isGeotagged(imgFilepath) && isJPEG(imgFilepath)) {
 							bitmap = BitmapFactory
 									.decodeStream(getContentResolver()
 											.openInputStream(
-													getUri(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-															imageID)));
+													getUri(
+															MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
+															thumbID)));
 
 							if (bitmap != null) {
 								newBitmap = Bitmap.createScaledBitmap(bitmap,
@@ -256,6 +249,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 										THUMBNAIL_DIMENSION, true);
 								bitmap.recycle();
 								if (newBitmap != null) {
+									imgPaths.add(imgFilepath);
 									publishProgress(newBitmap);
 								}
 							}
@@ -294,6 +288,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 			GeosightEntity.uploadImage(files[0], new ProgressCallback() {
 				@Override
 				public void onProgress(double progress) {
+
 					publishProgress(progress * 100);
 				}
 			});
@@ -333,11 +328,10 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		int column_index = cursor
 				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		cursor.moveToFirst();
-		Log.v("index", column_index + "");
 		try {
 			rv = cursor.getString(column_index);
 		} catch (Exception e) {
-			e.printStackTrace();
+			return null;
 		}
 		return rv;
 	}
@@ -351,13 +345,20 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	 * @throws IOException
 	 *             thrown when file doens't exist at filepath
 	 */
-	public boolean isGeotagged(String filepath) throws IOException {
+	private boolean isGeotagged(String filepath) throws IOException {
 		if (filepath != null) {
 			ExifInterface e = new ExifInterface(filepath);
-			Log.v("file", filepath);
 			return ((null != e.getAttribute(ExifInterface.TAG_GPS_LATITUDE)) && (null != e
 					.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)));
 		}
 		return false;
 	}
+
+	private boolean isJPEG(String filepath) {
+		String filenameArray[] = filepath.split("\\.");
+		String extension = filenameArray[filenameArray.length - 1];
+		return (extension.equalsIgnoreCase("JPEG") || 
+				extension.equalsIgnoreCase("JPG"));
+	}
+
 }
