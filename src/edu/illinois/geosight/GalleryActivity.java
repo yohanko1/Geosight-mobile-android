@@ -308,6 +308,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(Object result) {
+			GalleryActivity.this.finish();
 			Toast.makeText(GalleryActivity.this, "Upload Complete", Toast.LENGTH_LONG).show();
 			mProgress.setVisibility(View.GONE);
 		}

@@ -30,7 +30,6 @@ import edu.illinois.geosight.servercom.Sight;
  */
 public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 
-	private static final float CLOSE_THRESHOLD_RADIUS = 1000000; // in meters
 	private ArrayList<SightOverlayItem> mOverlays = new ArrayList<SightOverlayItem>();
 	private ArrayList<Sight> mSights = new ArrayList<Sight>();
 	private Context mContext;
@@ -111,7 +110,7 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 				mContext.getApplicationContext(), 0, alertIntent, 0);
 		
 		mLocManager.addProximityAlert(
-				latitude, longitude, CLOSE_THRESHOLD_RADIUS, -1,
+				latitude, longitude, (float) currentSight.getRadius(), -1,
 				proximityIntent);
 
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(
