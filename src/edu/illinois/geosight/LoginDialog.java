@@ -18,6 +18,10 @@ import android.widget.TextView;
  */
 public class LoginDialog {
 	
+	/**
+	 * Show the login box without a callback on success
+	 * @param ctx the context within which to show the login box
+	 */
 	public static void show(Context ctx){
 		LoginDialog.show(ctx, null);
 	}

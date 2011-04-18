@@ -23,14 +23,12 @@ import android.widget.Toast;
 import edu.illinois.geosight.servercom.GeosightEntity;
 
 /**
- * @author steven
+ * @author Steven Kabbes
  * GPS Camera activity handles launching the camera and uploading photos to Geosight
  * It uses the native camera App, and injects GPS coordinates manually
  */
 public class GPSCameraActivity extends Activity implements LocationListener{
 	
-	private static final int GPS_UPDATE_DISTANCE = 1;
-	private static final int GPS_UPDATE_MIN_TIME = 5000;
 	private LocationManager mManager;
 	private Uri imageUri;
 	private Location mLocation = null;
@@ -51,7 +49,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onPause() {
 		super.onPause();
-		turnOffGPS();// don't waste battery!
+		turnOffGPS();
 	}
 	
 	/**
@@ -59,7 +57,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onResume() {
 		super.onResume();
-		turnOnGPS();// register GPS locaiton updates
+		turnOnGPS();
 	}
 	
 	/**
@@ -87,9 +85,8 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_LONG);
 		        
 		    } else {
-		    	Log.v("CAMERA", "Photo was not taken successfully");
-		        Toast.makeText(this, "Picture was not taken, uploading test image anyway", Toast.LENGTH_LONG);
-		        
+		    	Log.v("CAMERA", "Photo was not taken successfully");	
+		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_LONG);
 		    }
 		    finish();
 		}
@@ -101,18 +98,22 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void launchCamera() {
 		ContentValues values = new ContentValues();
-		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
+		values.put(MediaStore.Images.Media.DESCRIPTION, "Geosight Image");
 
 //		// wait until we get current location
 //		mManager.requestLocationUpdates(LocationManager, minTime, minDistance, listener)
 //		ProgressDialog dialog = ProgressDialog.show(this, "", "Waiting for Current GPS Location...", true);
-//		while( mLocation == null ){
-//			mLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		while(mLocation == null){
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 //		}
 //		dialog.dismiss();
-		
-		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
-		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
+			
+		values.put(MediaStore.Images.Media.LATITUDE, 40.114044 );
+		values.put(MediaStore.Images.Media.LONGITUDE,-88.22485 );
 		
 		//imageUri is the current activity attribute, define and save it for later usage (also in onSaveInstanceState)
 		imageUri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
@@ -128,7 +129,9 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 * Gets GPS updates while this activity is active
 	 */
 	public void turnOnGPS(){
-		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_UPDATE_MIN_TIME, GPS_UPDATE_DISTANCE, this);
+		// get location updates as frequently as possible
+		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		mManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 	}
 	
 	/**

@@ -41,7 +41,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 
 	private ImageAdapter mImgAdapter;
 	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
-	private UploadImageTask uploadTask = new UploadImageTask();
+	private UploadImageTask uploadTask = new UploadImageTask();;
 	private ArrayList<String> imgPaths = new ArrayList<String>();
 
 	private Gallery mGallery;
@@ -80,6 +80,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	
 	@Override
 	protected void onPause() {
+		super.onPause();
 		loadImagesTask.cancel(true);
 		uploadTask.cancel(true);
 	};
@@ -92,6 +93,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 				mProgress.setVisibility(View.VISIBLE);
 				mUploadButton.setEnabled(false);
 				uploadTask.execute(new File(currentImgPath));
+				uploadTask = new UploadImageTask(); // for subsequent upload
 			} else {
 				LoginDialog.show(this);
 			}
