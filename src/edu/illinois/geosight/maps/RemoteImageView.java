@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 public class RemoteImageView extends LinearLayout {
 	protected ProgressBar bar;
 	protected ImageView image;
+	protected DownloadImageTask downloadTask = new DownloadImageTask();
 	
 	public RemoteImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -50,7 +51,7 @@ public class RemoteImageView extends LinearLayout {
 		if( url != null ){
 			image.setVisibility(GONE);
 			bar.setVisibility(VISIBLE);
-			(new DownloadImageTask()).execute(url);
+			downloadTask.execute(url);
 		}
 	}
 	

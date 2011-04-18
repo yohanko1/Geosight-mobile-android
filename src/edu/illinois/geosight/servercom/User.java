@@ -5,6 +5,11 @@ import java.util.Date;
 
 import org.json.JSONException;
 
+/**
+ * An abstraction for working with Geosight Users
+ * @author Steven Kabbes
+ *
+ */
 public class User {
 	protected long id;
 

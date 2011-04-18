@@ -14,6 +14,11 @@ import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 
+/**
+ * An abstraction for working with Sights 
+ * @author Steven Kabbes
+ *
+ */
 public class Sight {
 	protected long id;
 	protected long user_id;
