@@ -1,6 +1,15 @@
+-------------------------------------------------------------------------------
+Geosight combines the adventure of geocaching with the art of photography using upcoming photo geotagging technology. Traditional geocaching involves writing in a log book at each cache location. Geosight involves taking a photo at each 'sight' location, encouraging interesting and beautiful 'sights'. 
+Geosight will harness EXIF GPS data included in photos taken by modern digitial cameras and mobile phones.
+-------------------------------------------------------------------------------
 This is the Android version of the GeoSight mobile application.
-
+Target: Android 2.2
+-------------------------------------------------------------------------------
+Author: Steven Kabbes, Yo Han Ko
+-------------------------------------------------------------------------------
 Features:
-*
-*
-*
+* Login
+* Display sights on map
+* Navigation to a sight
+* Uploading photo to the server
+* Gallery to view local photos.

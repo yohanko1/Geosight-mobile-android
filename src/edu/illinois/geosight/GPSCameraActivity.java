@@ -23,9 +23,10 @@ import android.widget.Toast;
 import edu.illinois.geosight.servercom.GeosightEntity;
 
 /**
- * @author Steven Kabbes
  * GPS Camera activity handles launching the camera and uploading photos to Geosight
  * It uses the native camera App, and injects GPS coordinates manually
+ * @author Steven Kabbes
+ * @author Yo Han Ko
  */
 public class GPSCameraActivity extends Activity implements LocationListener{
 	

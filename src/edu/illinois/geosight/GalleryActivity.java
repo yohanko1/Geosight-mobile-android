@@ -348,7 +348,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	 * @throws IOException
 	 *             thrown when file doens't exist at filepath
 	 */
-	private boolean isGeotagged(String filepath) throws IOException {
+	public boolean isGeotagged(String filepath) throws IOException {
 		if (filepath != null) {
 			ExifInterface e = new ExifInterface(filepath);
 			return (e.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null) &&
@@ -357,7 +357,12 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		return false;
 	}
 
-	private boolean isJPEG(String filepath) {
+	/**
+	 * Check if the file is in jpeg format
+	 * @param filepath where file is
+	 * @return true if the filename has .jpeg postfix
+	 */
+	public boolean isJPEG(String filepath) {
 		String filenameArray[] = filepath.split("\\.");
 		String extension = filenameArray[filenameArray.length - 1];
 		return (extension.equalsIgnoreCase("JPEG") || extension.equalsIgnoreCase("JPG"));

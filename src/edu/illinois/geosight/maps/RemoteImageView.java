@@ -7,29 +7,25 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import edu.illinois.geosight.R;
-
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import edu.illinois.geosight.R;
 
 /**
  * View widget which is capable of showing remote images
  * @author Steven Kabbes
+ * @author Yo Han Ko
  *
  */
 public class RemoteImageView extends LinearLayout {
 	protected ProgressBar bar;
 	protected ImageView image;
-	protected DownloadImageTask downloadTask = new DownloadImageTask();
 	
 	public RemoteImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -51,7 +47,7 @@ public class RemoteImageView extends LinearLayout {
 		if( url != null ){
 			image.setVisibility(GONE);
 			bar.setVisibility(VISIBLE);
-			downloadTask.execute(url);
+			(new DownloadImageTask()).execute(url);
 		}
 	}
 	

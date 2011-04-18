@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -116,7 +117,7 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(
 				"google.navigation:q=%f,%f", latitude, longitude)));
 		mContext.startActivity(intent);
-
+		mLocManager.removeUpdates(proximityIntent);
 		return true;
 	}
 }
