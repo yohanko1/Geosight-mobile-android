@@ -25,7 +25,7 @@ import android.widget.SlidingDrawer;
 import android.widget.Toast;
 
 /**
- * @author steven
+ * @author Steven Kabbes
  * GPS Camera activity handles launching the camera and uploading photos to Geosight
  * It uses the native camera App, and injects GPS coordinates manually
  */
@@ -51,7 +51,6 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onPause() {
 		super.onPause();
-		// don't waste battery!
 		turnOffGPS();
 	}
 	
@@ -60,7 +59,6 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onResume() {
 		super.onResume();
-		// register GPS locaiton updates
 		turnOnGPS();
 	}
 	
@@ -89,9 +87,8 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_LONG);
 		        
 		    } else {
-		    	Log.v("CAMERA", "Photo was not taken successfully");
-		        Toast.makeText(this, "Picture was not taken, uploading test image anyway", Toast.LENGTH_LONG);
-		        
+		    	Log.v("CAMERA", "Photo was not taken successfully");	
+		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_LONG);
 		    }
 		    finish();
 		}
@@ -103,7 +100,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void launchCamera() {
 		ContentValues values = new ContentValues();
-		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
+		values.put(MediaStore.Images.Media.DESCRIPTION, "Geosight Image");
 
 		if( mLocation == null ){
 			mLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -126,7 +123,8 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 * Gets GPS updates while this activity is active
 	 */
 	public void turnOnGPS(){
-		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, this);
+		// get location updates as frequently as possible
+		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 	
 	/**
