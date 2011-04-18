@@ -2,6 +2,7 @@ package edu.illinois.geosight;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -79,15 +80,6 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		});
 
 		loadImages();
-		// old gallery code
-		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		// setProgressBarIndeterminateVisibility(true);
-		// displayWidth = ((WindowManager)
-		// getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		// setGridView();
-
-		// asynchronous load images
-		// loadImages();
 	}
 
 	@Override
@@ -219,15 +211,13 @@ public class GalleryActivity extends Activity implements OnClickListener {
 					null, 		// Return all rows
 					null, 
 					null);
-			int imgIndex = cursor
-					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID);
-			int thumIndex = cursor
-			.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
+			
+			int imgIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID);
+			int thumIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
 			int size = cursor.getCount();
 
 			if (size == 0) {
-				Toast.makeText(getApplicationContext(), "No image avaiable",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "No images avaiable", Toast.LENGTH_LONG).show();
 			} else {
 				int imageID = 0, thumbID = 0;
 				for (int i = 0; i < size; i++) {
@@ -244,12 +234,10 @@ public class GalleryActivity extends Activity implements OnClickListener {
 							continue;
 						
 						if (isGeotagged(imgFilepath) && isJPEG(imgFilepath)) {
-							bitmap = BitmapFactory
-									.decodeStream(getContentResolver()
-											.openInputStream(
-													getUri(
-															MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-															thumbID)));
+							
+							Uri thumbURI = getUri( MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, thumbID);
+							InputStream thumbIS = getContentResolver().openInputStream( thumbURI );
+							bitmap = BitmapFactory.decodeStream( thumbIS );
 
 							if (bitmap != null) {
 								newBitmap = Bitmap.createScaledBitmap(bitmap,
@@ -263,6 +251,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 							}
 						}
 					} catch (IOException e) {
+						// ignore missing photos
 					}
 				}
 			}
@@ -296,7 +285,6 @@ public class GalleryActivity extends Activity implements OnClickListener {
 			GeosightEntity.uploadImage(files[0], new ProgressCallback() {
 				@Override
 				public void onProgress(double progress) {
-
 					publishProgress(progress * 100);
 				}
 			});
@@ -307,15 +295,13 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		@Override
 		public void onProgressUpdate(Double... progress) {
 			for (int i = 0; i < progress.length; i++) {
-				Log.v("ASDF", "" + progress[i].intValue());
 				mProgress.setProgress(progress[i].intValue());
 			}
 		}
 
 		@Override
 		protected void onPostExecute(Object result) {
-			Toast.makeText(GalleryActivity.this, "Upload Complete",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(GalleryActivity.this, "Upload Complete", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -333,8 +319,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 				null, // WHERE clause; which rows to return (all rows)
 				null, // WHERE clause selection arguments (none)
 				null); // Order-by clause (ascending by name)
-		int column_index = cursor
-				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		cursor.moveToFirst();
 		try {
 			rv = cursor.getString(column_index);
@@ -356,8 +341,8 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	private boolean isGeotagged(String filepath) throws IOException {
 		if (filepath != null) {
 			ExifInterface e = new ExifInterface(filepath);
-			return ((null != e.getAttribute(ExifInterface.TAG_GPS_LATITUDE)) && (null != e
-					.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)));
+			return (e.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null) &&
+					(e.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null);
 		}
 		return false;
 	}
@@ -365,8 +350,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	private boolean isJPEG(String filepath) {
 		String filenameArray[] = filepath.split("\\.");
 		String extension = filenameArray[filenameArray.length - 1];
-		return (extension.equalsIgnoreCase("JPEG") || 
-				extension.equalsIgnoreCase("JPG"));
+		return (extension.equalsIgnoreCase("JPEG") || extension.equalsIgnoreCase("JPG"));
 	}
 
 }

@@ -47,14 +47,6 @@
 		android:text="GALLERY"></Button>
 	</LinearLayout>
 	
-	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button 
-		style="@style/homescreen_button_style" 
-		android:id="@+id/UploadTestButton" 
-		android:text="UPLOAD TEST"></Button>
-	</LinearLayout>
-	
-	
      <FrameLayout
          android:layout_width="fill_parent" android:layout_height="fill_parent"
          android:layout_weight="1">
