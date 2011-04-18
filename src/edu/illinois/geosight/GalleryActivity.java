@@ -232,14 +232,15 @@ public class GalleryActivity extends Activity implements OnClickListener {
 					imageID = cursor.getInt(imgIndex);
 					thumbID = cursor.getInt(thumIndex);
 					try {
-						// check if the image is geotagged.
-						// don't display thumbnail if it's not.
-						String imgFilepath = getRealPathFromURI(getUri(
-								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-								imageID));
+
+						Uri imageUri = getUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageID);
+						String imgFilepath = getRealPathFromURI( imageUri );
+						
 						if (imgFilepath == null)
 							continue;
 						
+						// check if the image is geotagged.
+						// don't display thumbnail if it's not.
 						if (isGeotagged(imgFilepath) && isJPEG(imgFilepath)) {
 							
 							Uri thumbURI = getUri( MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, thumbID);
