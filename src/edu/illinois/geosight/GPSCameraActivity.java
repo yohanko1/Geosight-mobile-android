@@ -4,12 +4,9 @@
 package edu.illinois.geosight;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import edu.illinois.geosight.servercom.GeosightEntity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +18,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.SlidingDrawer;
+import android.view.View;
 import android.widget.Toast;
+import edu.illinois.geosight.servercom.GeosightEntity;
 
 /**
  * @author steven
@@ -31,6 +29,8 @@ import android.widget.Toast;
  */
 public class GPSCameraActivity extends Activity implements LocationListener{
 	
+	private static final int GPS_UPDATE_DISTANCE = 1;
+	private static final int GPS_UPDATE_MIN_TIME = 5000;
 	private LocationManager mManager;
 	private Uri imageUri;
 	private Location mLocation = null;
@@ -51,8 +51,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onPause() {
 		super.onPause();
-		// don't waste battery!
-		turnOffGPS();
+		turnOffGPS();// don't waste battery!
 	}
 	
 	/**
@@ -60,8 +59,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 */
 	protected void onResume() {
 		super.onResume();
-		// register GPS locaiton updates
-		turnOnGPS();
+		turnOnGPS();// register GPS locaiton updates
 	}
 	
 	/**
@@ -105,9 +103,13 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 		ContentValues values = new ContentValues();
 		values.put(MediaStore.Images.Media.DESCRIPTION,"Geosight Image");
 
-		if( mLocation == null ){
-			mLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		}
+//		// wait until we get current location
+//		mManager.requestLocationUpdates(LocationManager, minTime, minDistance, listener)
+//		ProgressDialog dialog = ProgressDialog.show(this, "", "Waiting for Current GPS Location...", true);
+//		while( mLocation == null ){
+//			mLocation = mManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		}
+//		dialog.dismiss();
 		
 		values.put(MediaStore.Images.Media.LATITUDE, mLocation.getLatitude() );
 		values.put(MediaStore.Images.Media.LONGITUDE, mLocation.getLongitude() );
@@ -126,7 +128,7 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 	 * Gets GPS updates while this activity is active
 	 */
 	public void turnOnGPS(){
-		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, this);
+		mManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_UPDATE_MIN_TIME, GPS_UPDATE_DISTANCE, this);
 	}
 	
 	/**
@@ -138,24 +140,21 @@ public class GPSCameraActivity extends Activity implements LocationListener{
 
 	@Override
 	public void onLocationChanged(Location newLocation) {
-		Log.v("GPS", "Got new location");
-		
 		//launch the camera on first location fix
 		if( mLocation == null ){
 			mLocation = newLocation;
-			//launchCamera();
 		}
 		mLocation = newLocation;
 	}
 
 	@Override
 	public void onProviderDisabled(String arg0) {
-		
+		Toast.makeText(getApplicationContext(), "GPS Provider not available", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		
+		// do nothing
 	}
 
 	@Override

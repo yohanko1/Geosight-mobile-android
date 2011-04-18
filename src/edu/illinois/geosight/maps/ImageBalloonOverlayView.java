@@ -8,6 +8,10 @@ import edu.illinois.geosight.R;
 
 import android.content.Context;
 
+/**
+ * Class for overlay view displaying image on inflated balloon
+ * @author Steven Kabbes
+ */
 public class ImageBalloonOverlayView extends BalloonOverlayView {
 	protected RemoteImageView remoteView;
 	

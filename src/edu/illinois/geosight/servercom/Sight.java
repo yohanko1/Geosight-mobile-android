@@ -14,6 +14,12 @@ import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 
+/**
+ * Class for sight representation
+ * @author Steven Kabbes
+ * @author Yo Han Ko
+ *
+ */
 public class Sight {
 	protected long id;
 	protected long user_id;

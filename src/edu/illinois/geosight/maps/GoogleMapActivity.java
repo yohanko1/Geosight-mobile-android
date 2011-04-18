@@ -10,12 +10,16 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.OverlayItem;
 
 import edu.illinois.geosight.R;
 import edu.illinois.geosight.servercom.GeosightException;
 import edu.illinois.geosight.servercom.Sight;
 
+/**
+ * Class for launching Google map canvas as activity
+ * @author Steven Kabbes
+ * @author Yo Han Ko
+ */
 public class GoogleMapActivity extends MapActivity {
 	MapView mMapView;
 	MapController mController;
@@ -75,10 +79,6 @@ public class GoogleMapActivity extends MapActivity {
 	}
 
 	private void markCurrentLoc() {
-		/*
-		 * TODO: Need to set current location marker to the last set location
-		 * how to get last-set location?
-		 */
 		mLocOverlay.runOnFirstFix(new Runnable() {
 			@Override
 			public void run() {
@@ -87,14 +87,20 @@ public class GoogleMapActivity extends MapActivity {
 		});
 	}
 
-	// necessary function for Google to collect data or something.
-	// return false if we aren't showing a route
+	/* 
+	 *	necessary function for Google to collect data or something.
+	 *	return false if we aren't showing a route
+	 * @see com.google.android.maps.MapActivity#isRouteDisplayed()
+	 */
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
 	
-	// necessary function to tell Google whether we're displaying a location or not
+	/*
+	 * necessary function to tell Google whether we're displaying a location or not(non-Javadoc)
+	 * @see com.google.android.maps.MapActivity#isLocationDisplayed()
+	 */
 	@Override
 	protected boolean isLocationDisplayed(){
 		return true;

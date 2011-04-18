@@ -39,7 +39,7 @@ import edu.illinois.geosight.servercom.User;
  */
 public class GalleryActivity extends Activity implements OnClickListener {
 
-	private ImageAdapter ia;
+	private ImageAdapter mImgAdapter;
 	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
 	private UploadImageTask uploadTask = new UploadImageTask();
 	private ArrayList<String> imgPaths = new ArrayList<String>();
@@ -49,13 +49,11 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	private ProgressBar mProgress;
 	private Button mUploadButton;
 	private Button mCancelButton;
-
 	private String currentImgPath;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.gallery);
 		setView();
 
@@ -73,14 +71,18 @@ public class GalleryActivity extends Activity implements OnClickListener {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-//				bm = BitmapFactory.decodeFile(currentImgPath);
 				mImg.setImageBitmap(bm);
+				mUploadButton.setEnabled(true);
 			}
-
 		});
-
 		loadImages();
 	}
+	
+	@Override
+	protected void onPause() {
+		loadImagesTask.cancel(true);
+		uploadTask.cancel(true);
+	};
 
 	@Override
 	public void onClick(View v) {
@@ -99,6 +101,9 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Set up components for view
+	 */
 	private void setView() {
 		mGallery = (Gallery) findViewById(R.id.gallery);
 		mImg = (ImageView) findViewById(R.id.galleryImage);
@@ -106,8 +111,8 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		mUploadButton = (Button) findViewById(R.id.galleryUploadButton);
 		mCancelButton = (Button) findViewById(R.id.galleryCancelButton);
 
-		ia = new ImageAdapter(getApplicationContext());
-		mGallery.setAdapter(ia);
+		mImgAdapter = new ImageAdapter(getApplicationContext());
+		mGallery.setAdapter(mImgAdapter);
 
 		mUploadButton.setOnClickListener(this);
 		mCancelButton.setOnClickListener(this);
@@ -139,8 +144,8 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	 */
 	private void addImage(Bitmap... value) {
 		for (Bitmap image : value) {
-			ia.addPhoto(image);
-			ia.notifyDataSetChanged(); // display images
+			mImgAdapter.addPhoto(image);
+			mImgAdapter.notifyDataSetChanged(); // display images
 		}
 	}
 
@@ -302,6 +307,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(Object result) {
 			Toast.makeText(GalleryActivity.this, "Upload Complete", Toast.LENGTH_LONG).show();
+			mProgress.setVisibility(View.GONE);
 		}
 	}
 

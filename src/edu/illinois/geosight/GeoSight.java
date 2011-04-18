@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -15,8 +13,11 @@ import android.widget.TextView;
 import edu.illinois.geosight.maps.GoogleMapActivity;
 import edu.illinois.geosight.servercom.User;
 
-/*
+/**
  * This is the homescreen activity, which serves as a landing page for the rest of the applicaiton
+ * @author Steven Kabbes
+ * @author Yo Han Ko
+ *
  */
 public class GeoSight extends Activity implements LoginCallback{
 	private ImageView mLogo;
