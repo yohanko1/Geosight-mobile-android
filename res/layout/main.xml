@@ -8,27 +8,50 @@
 	<ImageView android:id="@+id/logo" android:layout_marginTop="10dp" android:layout_marginBottom="30dp" android:layout_gravity="right" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/logo"></ImageView>
 	
 	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button style="@style/homescreen_button_style" android:id="@+id/LoginButton" android:text="LOGIN"></Button>
+	<Button 
+		style="@style/homescreen_button_style" 
+		android:onClick="onLoginClicked"
+		android:id="@+id/LoginButton" 
+		android:text="LOGIN"></Button>
 	</LinearLayout>
 	
 	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button style="@style/homescreen_button_style" android:id="@+id/CameraPreview" android:text="CAMERA"></Button>
+	<Button 
+		style="@style/homescreen_button_style"
+		android:onClick="onCameraClicked"
+		android:id="@+id/CameraPreview" 
+		android:text="CAMERA"></Button>
 	</LinearLayout>
 	
 	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button style="@style/homescreen_button_style" android:id="@+id/SightsButton" android:text="VIEW SIGHTS"></Button>
+	<Button 
+		style="@style/homescreen_button_style" 
+		android:onClick="onSightsClicked"
+		android:id="@+id/SightsButton" 
+		android:text="VIEW SIGHTS"></Button>
 	</LinearLayout>
 	 
 	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button style="@style/homescreen_button_style" android:id="@+id/MapButton" android:text="MAP"></Button>
+	<Button 
+		style="@style/homescreen_button_style" 
+		android:onClick="onMapClicked"
+		android:id="@+id/MapButton" 
+		android:text="MAP"></Button>
 	</LinearLayout>
 
 	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button style="@style/homescreen_button_style" android:id="@+id/GalleryButton" android:text="GALLERY"></Button>
+	<Button 
+		style="@style/homescreen_button_style" 
+		android:onClick="onGalleryClicked"
+		android:id="@+id/GalleryButton" 
+		android:text="GALLERY"></Button>
 	</LinearLayout>
 	
 	<LinearLayout style="@style/homescreen_button_wrapper_style">
-	<Button style="@style/homescreen_button_style" android:id="@+id/UploadTestButton" android:text="UPLOAD TEST"></Button>
+	<Button 
+		style="@style/homescreen_button_style" 
+		android:id="@+id/UploadTestButton" 
+		android:text="UPLOAD TEST"></Button>
 	</LinearLayout>
 	
 	

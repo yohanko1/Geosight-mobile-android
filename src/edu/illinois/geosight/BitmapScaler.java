@@ -11,6 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
+/**
+ * Not our code at all. This allows bitmaps not to run out of memory 
+ * http://zerocredibility.wordpress.com/2011/01/27/android-bitmap-scaling/
+ */
 class BitmapScaler {
 	private static class Size {
 		int sample;

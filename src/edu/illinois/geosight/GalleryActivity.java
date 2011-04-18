@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,11 +23,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.Gallery;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import edu.illinois.geosight.servercom.GeosightEntity;
+import edu.illinois.geosight.servercom.User;
 
 /**
  * 
@@ -95,11 +94,15 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		int id = v.getId();
 		if (id == R.id.galleryUploadButton) {
-			mProgress.setVisibility(View.VISIBLE);
-			mUploadButton.setEnabled(false);
-			uploadTask.execute(new File(currentImgPath));
+			if( User.current != null ){
+				mProgress.setVisibility(View.VISIBLE);
+				mUploadButton.setEnabled(false);
+				uploadTask.execute(new File(currentImgPath));
+			} else {
+				LoginDialog.show(this);
+			}
 		} else if (id == R.id.galleryCancelButton) {
-			// uploadTask.cancel(true);
+			uploadTask.cancel(true);
 			finish();
 		}
 	}

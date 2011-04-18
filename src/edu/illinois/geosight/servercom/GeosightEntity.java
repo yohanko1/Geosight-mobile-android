@@ -209,7 +209,7 @@ public class GeosightEntity {
 		uploadImage(file, null);
 	}
 
-
+    // modified version of 
 	// http://moazzam-khan.com/blog/?tag=android-upload-file
 	public static void uploadImage(File file, ProgressCallback progress) {
 		HttpURLConnection connection = null;

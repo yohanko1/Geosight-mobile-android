@@ -18,7 +18,7 @@ import edu.illinois.geosight.servercom.User;
 /*
  * This is the homescreen activity, which serves as a landing page for the rest of the applicaiton
  */
-public class GeoSight extends Activity implements OnClickListener, LoginCallback{
+public class GeoSight extends Activity implements LoginCallback{
 	private ImageView mLogo;
 	private TextView mStatus;
 	
@@ -40,14 +40,6 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 		setContentView(R.layout.main);
 
 		assignViewMembers();
-		
-		// register the click events for each button
-		loginButton.setOnClickListener(this);
-		cameraPreview.setOnClickListener(this);
-		sightsButton.setOnClickListener(this);
-		mapButton.setOnClickListener(this);
-		galleryButton.setOnClickListener(this);
-		uploadButton.setOnClickListener(this);
 
 		// start up the entrance animations
 		startAnimations();
@@ -81,8 +73,7 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 					R.anim.slide_in_from_left);
 
 			// each slide in left will be delayed slightly from the previous
-			slideInLeft.setStartOffset(slideInRight.getDuration() + i
-					* slideInLeft.getDuration() / 5);
+			slideInLeft.setStartOffset(slideInRight.getDuration() + i * slideInLeft.getDuration() / 5);
 
 			if (i == 0) {
 				loginButton.startAnimation(slideInLeft);
@@ -97,41 +88,39 @@ public class GeoSight extends Activity implements OnClickListener, LoginCallback
 			}
 		}
 	}
-
 	
-    /**
-     * Handle button clicks for the 4 main buttons on the screen
-     */
-    @Override
-	public void onClick(View v) {
-		Intent intent = null;
-		int id = v.getId();
-		if (id == R.id.CameraPreview) {
-			intent = new Intent(this, GPSCameraActivity.class);
-		} else if ( v.getId() == R.id.LoginButton ){
-			LoginDialog.show(this, this);
-			return;
-		} else if (id == R.id.MapButton) {
-			intent = new Intent(GeoSight.this, GoogleMapActivity.class);
-		} else if (id == R.id.SightsButton) {
-			intent = new Intent(GeoSight.this, SightListActivity.class);
-		} else if (id == R.id.GalleryButton) {
-			intent = new Intent(GeoSight.this, GalleryActivity.class);
-		} else if ( id == R.id.UploadTestButton ){
-			
-			intent = new Intent(GeoSight.this, UploadActivity.class);
-			Bundle bundle = new Bundle();
-			bundle.putString("image", "/mnt/asec/file1.jpg");
-			intent.putExtras(bundle);
-			
-		}
+	public void onCameraClicked(View v){
+		Intent intent = new Intent(this, GPSCameraActivity.class);
 		startActivity(intent);
 	}
+	
+	public void onSightsClicked(View v){
+		Intent intent = new Intent(this, SightListActivity.class);
+		startActivity(intent);
+	}
+	
+	public void onMapClicked(View v){
+		Intent intent = new Intent(this, GoogleMapActivity.class);
+		startActivity(intent);
+	}
+	
+	public void onGalleryClicked(View v){
+		Intent intent = new Intent(this, GalleryActivity.class);
+		startActivity(intent);
+	}
+	
+	public void onLoginClicked(View v){
+		LoginDialog.show(this, this);
+	}
+	
 
 	// simply here for conveniance later
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if( User.current != null){
+			onSuccessfulLogin( User.current );
+		}
 	}
 
 	// simply here for conveniance later

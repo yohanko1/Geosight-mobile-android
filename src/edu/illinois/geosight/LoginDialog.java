@@ -18,6 +18,10 @@ import android.widget.TextView;
  */
 public class LoginDialog {
 	
+	public static void show(Context ctx){
+		LoginDialog.show(ctx, null);
+	}
+	
 	/**
 	 * Shows the login dialog box
 	 * @param ctx The context in which to display the box.
@@ -53,7 +57,9 @@ public class LoginDialog {
 				if( user != null ){
 					d.dismiss();
 					User.current = user;
-					callback.onSuccessfulLogin(user);
+					if( callback != null ){
+						callback.onSuccessfulLogin(user);
+					}
 				} else {
 					error.setVisibility(View.VISIBLE);
 				}
