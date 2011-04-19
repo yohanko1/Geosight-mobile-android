@@ -36,10 +36,12 @@
 		
 		<Button android:id="@+id/galleryUploadButton" android:layout_weight="1"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:text="Upload" />
+			android:text="Upload"
+			android:onClick="onUploadClick" />
 		<Button android:id="@+id/galleryCancelButton" android:layout_weight="1"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:text="Cancel" />
+			android:text="Cancel"
+			android:onClick="onCancelClick" />
 	</LinearLayout>
 
 </RelativeLayout>

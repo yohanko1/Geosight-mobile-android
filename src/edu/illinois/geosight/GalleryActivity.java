@@ -37,7 +37,7 @@ import edu.illinois.geosight.servercom.User;
  * @author Yo Han
  * 
  */
-public class GalleryActivity extends Activity implements OnClickListener {
+public class GalleryActivity extends Activity {
 
 	private ImageAdapter mImgAdapter;
 	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
@@ -49,7 +49,7 @@ public class GalleryActivity extends Activity implements OnClickListener {
 	private ProgressBar mProgress;
 	private Button mUploadButton;
 	private Button mCancelButton;
-	private String currentImgPath;
+	private String currentImgPath = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -84,22 +84,24 @@ public class GalleryActivity extends Activity implements OnClickListener {
 		loadImagesTask.cancel(true);
 		uploadTask.cancel(true);
 	};
-
-	@Override
-	public void onClick(View v) {
-		int id = v.getId();
-		if (id == R.id.galleryUploadButton) {
-			if( User.current != null ){
+	
+	public void onCancelClick(View v){
+		uploadTask.cancel(true);
+		finish();
+	}
+	
+	public void onUploadClick(View v){
+		if( User.current != null ){
+			if( currentImgPath == null ){
+				Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+			} else {
 				mProgress.setVisibility(View.VISIBLE);
 				mUploadButton.setEnabled(false);
 				uploadTask.execute(new File(currentImgPath));
 				uploadTask = new UploadImageTask(); // for subsequent upload
-			} else {
-				LoginDialog.show(this);
 			}
-		} else if (id == R.id.galleryCancelButton) {
-			uploadTask.cancel(true);
-			finish();
+		} else {
+			LoginDialog.show(this);
 		}
 	}
 
@@ -115,9 +117,6 @@ public class GalleryActivity extends Activity implements OnClickListener {
 
 		mImgAdapter = new ImageAdapter(getApplicationContext());
 		mGallery.setAdapter(mImgAdapter);
-
-		mUploadButton.setOnClickListener(this);
-		mCancelButton.setOnClickListener(this);
 	}
 
 	/**
