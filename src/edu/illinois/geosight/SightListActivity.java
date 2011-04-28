@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,8 +15,6 @@ import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 
-import edu.illinois.geosight.maps.GoogleMapActivity;
-import edu.illinois.geosight.maps.ProximityBroadcastReceiver;
 import edu.illinois.geosight.servercom.GeosightException;
 import edu.illinois.geosight.servercom.Sight;
 

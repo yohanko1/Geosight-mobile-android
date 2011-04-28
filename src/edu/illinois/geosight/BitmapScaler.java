@@ -12,7 +12,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 /**
- * Not our code at all. This allows bitmaps not to run out of memory 
+ * Not our code at all. This allows bitmaps not to run out of memory
+ * Source taken from:
  * http://zerocredibility.wordpress.com/2011/01/27/android-bitmap-scaling/
  */
 class BitmapScaler {

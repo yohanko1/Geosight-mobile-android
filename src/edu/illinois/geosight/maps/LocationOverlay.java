@@ -2,7 +2,6 @@ package edu.illinois.geosight.maps;
 
 import java.util.ArrayList;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +9,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Handler;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;

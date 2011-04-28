@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.json.JSONException;
 
 import android.util.Log;

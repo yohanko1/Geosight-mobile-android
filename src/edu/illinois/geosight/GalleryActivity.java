@@ -1,6 +1,7 @@
 package edu.illinois.geosight;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,9 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,29 +33,38 @@ import edu.illinois.geosight.servercom.User;
  * 
  * GalleryActivity class to view geotagged photos stored on local device.
  * 
- * @author Yo Han
+ * @author Yo Han Ko
+ * @author Steven Kabbes
  * 
  */
 public class GalleryActivity extends Activity {
 
+	private static final int BITMAP_SCALE_FACTOR = 500;
 	private ImageAdapter mImgAdapter;
-	private LoadImagesFromSDCard loadImagesTask = new LoadImagesFromSDCard();
-	private UploadImageTask uploadTask = new UploadImageTask();;
-	private ArrayList<String> imgPaths = new ArrayList<String>();
+	private LoadImagesFromSDCard mLoadImagesTask = new LoadImagesFromSDCard();
+	private UploadImageTask mUploadTask = new UploadImageTask();
+	private ArrayList<String> mImgPaths = new ArrayList<String>();
 
 	private Gallery mGallery;
 	private ImageView mImg;
 	private ProgressBar mProgress;
 	private Button mUploadButton;
+	@SuppressWarnings("unused")
 	private Button mCancelButton;
-	private String currentImgPath = null;
+	private String mCurrentImgPath = null;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gallery);
 		setView();
 
+		// set call-back for thumbnails
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
 			Bitmap bm = null;
 
@@ -65,9 +73,10 @@ public class GalleryActivity extends Activity {
 					int position, long id) {
 				if (bm != null)
 					bm.recycle();
-				currentImgPath = imgPaths.get(position);
+				mCurrentImgPath = mImgPaths.get(position);
 				try {
-					bm = new BitmapScaler(new File(currentImgPath), 500).getScaled();
+					bm = new BitmapScaler(new File(mCurrentImgPath),
+							BITMAP_SCALE_FACTOR).getScaled();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -75,30 +84,48 @@ public class GalleryActivity extends Activity {
 				mUploadButton.setEnabled(true);
 			}
 		});
-		loadImages();
+		loadThumbnailImages();
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
-		loadImagesTask.cancel(true);
-		uploadTask.cancel(true);
+		mLoadImagesTask.cancel(true);
+		mUploadTask.cancel(true);
 	};
-	
-	public void onCancelClick(View v){
-		uploadTask.cancel(true);
+
+	/**
+	 * Callback for cancel button
+	 * 
+	 * @param v
+	 *            current view
+	 */
+	public void onCancelClick(View v) {
+		mUploadTask.cancel(true);
 		finish();
 	}
-	
-	public void onUploadClick(View v){
-		if( User.current != null ){
-			if( currentImgPath == null ){
-				Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+
+	/**
+	 * Callback for upload button
+	 * 
+	 * @param v
+	 *            current view
+	 */
+	public void onUploadClick(View v) {
+		if (User.current != null) {
+			if (mCurrentImgPath == null) {
+				Toast.makeText(this, R.string.please_select_an_image,
+						Toast.LENGTH_SHORT).show();
 			} else {
 				mProgress.setVisibility(View.VISIBLE);
 				mUploadButton.setEnabled(false);
-				uploadTask.execute(new File(currentImgPath));
-				uploadTask = new UploadImageTask(); // for subsequent upload
+				mUploadTask.execute(new File(mCurrentImgPath));
+				mUploadTask = new UploadImageTask(); // for subsequent upload
 			}
 		} else {
 			LoginDialog.show(this);
@@ -114,7 +141,6 @@ public class GalleryActivity extends Activity {
 		mProgress = (ProgressBar) findViewById(R.id.galleryUploadProgress);
 		mUploadButton = (Button) findViewById(R.id.galleryUploadButton);
 		mCancelButton = (Button) findViewById(R.id.galleryCancelButton);
-
 		mImgAdapter = new ImageAdapter(getApplicationContext());
 		mGallery.setAdapter(mImgAdapter);
 	}
@@ -122,14 +148,14 @@ public class GalleryActivity extends Activity {
 	/**
 	 * Load images.
 	 */
-	private void loadImages() {
+	private void loadThumbnailImages() {
 		final Object data = getLastNonConfigurationInstance();
 		if (data == null) {
-			loadImagesTask.execute();
+			mLoadImagesTask.execute();
 		} else {
 			final Bitmap[] photos = (Bitmap[]) data;
 			if (photos.length == 0) {
-				loadImagesTask.execute();
+				mLoadImagesTask.execute();
 			}
 			for (Bitmap photo : photos) {
 				addImage(photo);
@@ -153,31 +179,64 @@ public class GalleryActivity extends Activity {
 	/**
 	 * Adapter for image files.
 	 */
-	class ImageAdapter extends BaseAdapter {
+	private class ImageAdapter extends BaseAdapter {
 
 		private Context mContext;
 		private ArrayList<Bitmap> photos = new ArrayList<Bitmap>();
 
+		/**
+		 * Constructor
+		 * 
+		 * @param context
+		 *            current app context
+		 */
 		public ImageAdapter(Context context) {
 			mContext = context;
 		}
 
+		/**
+		 * Add photo to array of photos
+		 * 
+		 * @param photo
+		 *            photo to be added
+		 */
 		public void addPhoto(Bitmap photo) {
 			photos.add(photo);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.widget.Adapter#getCount()
+		 */
 		public int getCount() {
 			return photos.size();
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.widget.Adapter#getItem(int)
+		 */
 		public Object getItem(int position) {
 			return photos.get(position);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.widget.Adapter#getItemId(int)
+		 */
 		public long getItemId(int position) {
 			return position;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.widget.Adapter#getView(int, android.view.View,
+		 * android.view.ViewGroup)
+		 */
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ImageView imgView;
 			if (convertView == null) {
@@ -190,96 +249,121 @@ public class GalleryActivity extends Activity {
 			imgView.setAdjustViewBounds(true);
 			return imgView;
 		}
-
-		public ArrayList<Bitmap> getPhotos() {
-			return photos;
-		}
 	}
 
 	/**
 	 * Asynchronous task for loading the images from the SD card.
 	 */
-	class LoadImagesFromSDCard extends AsyncTask<Object, Bitmap, Object> {
+	private class LoadImagesFromSDCard extends
+			AsyncTask<Object, Bitmap, Object> {
 
 		private static final int THUMBNAIL_DIMENSION = 70;
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#doInBackground(Params[])
+		 */
 		@Override
 		protected Object doInBackground(Object... params) {
-			Bitmap bitmap = null;
-			Bitmap newBitmap = null;
-
-			String[] projection = { MediaStore.Images.Thumbnails._ID, MediaStore.Images.Thumbnails.IMAGE_ID };
+			String[] projection = { MediaStore.Images.Thumbnails._ID,
+					MediaStore.Images.Thumbnails.IMAGE_ID };
 
 			// Create the cursor pointing to the SDCard
 			Cursor cursor = managedQuery(
 					MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
 					projection, // Which columns to return
-					null, 		// Return all rows
-					null, 
-					null);
-			
-			int imgIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID);
-			int thumIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
-			int size = cursor.getCount();
-
-			if (size == 0) {
-				Toast.makeText(getApplicationContext(), "No images avaiable", Toast.LENGTH_LONG).show();
+					null, // Return all rows
+					null, null);
+			if (cursor.getCount() == 0) {
+				Toast.makeText(getApplicationContext(),
+						R.string.no_images_avaiable, Toast.LENGTH_LONG).show();
 			} else {
-				int imageID = 0, thumbID = 0;
-				for (int i = 0; i < size; i++) {
-					cursor.moveToPosition(i);
-					imageID = cursor.getInt(imgIndex);
-					thumbID = cursor.getInt(thumIndex);
-					try {
-
-						Uri imageUri = getUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageID);
-						String imgFilepath = getRealPathFromURI( imageUri );
-						
-						if (imgFilepath == null)
-							continue;
-						
-						// check if the image is geotagged.
-						// don't display thumbnail if it's not.
-						if (isGeotagged(imgFilepath) && isJPEG(imgFilepath)) {
-							
-							Uri thumbURI = getUri( MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, thumbID);
-							InputStream thumbIS = getContentResolver().openInputStream( thumbURI );
-							bitmap = BitmapFactory.decodeStream( thumbIS );
-
-							if (bitmap != null) {
-								newBitmap = Bitmap.createScaledBitmap(bitmap,
-										THUMBNAIL_DIMENSION,
-										THUMBNAIL_DIMENSION, true);
-								bitmap.recycle();
-								if (newBitmap != null) {
-									imgPaths.add(imgFilepath);
-									publishProgress(newBitmap);
-								}
-							}
-						}
-					} catch (IOException e) {
-						// ignore missing photos
-					}
-				}
+				iterateImages(cursor);
 			}
 			cursor.close();
 			return null;
 		}
 
+		private void iterateImages(Cursor cursor) {
+			int imgIndex = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID);
+			int thumIndex = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID);
+			int size = cursor.getCount();
+
+			for (int i = 0; i < size; i++) {
+				cursor.moveToPosition(i);
+				try {
+					Uri imageUri = getUri(
+							MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+							cursor.getInt(imgIndex));
+					String imgFilepath = getRealPathFromURI(imageUri);
+					if (imgFilepath != null)
+						updateThumbnail(cursor.getInt(thumIndex), imgFilepath);
+				} catch (IOException e) {
+					// ignore missing photos
+				}
+			}
+		}
+
+		private void updateThumbnail(int thumbID, String imgFilepath)
+				throws IOException, FileNotFoundException {
+			Bitmap bitmap;
+			Bitmap newBitmap;
+			if (isGeotagged(imgFilepath) && isJPEG(imgFilepath)) {
+
+				Uri thumbURI = getUri(
+						MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
+						thumbID);
+				InputStream thumbIS = getContentResolver().openInputStream(
+						thumbURI);
+				bitmap = BitmapFactory.decodeStream(thumbIS);
+
+				if (bitmap != null) {
+					newBitmap = Bitmap.createScaledBitmap(bitmap,
+							THUMBNAIL_DIMENSION, THUMBNAIL_DIMENSION, true);
+					bitmap.recycle();
+					if (newBitmap != null) {
+						mImgPaths.add(imgFilepath);
+						publishProgress(newBitmap);
+					}
+				}
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onProgressUpdate(Progress[])
+		 */
 		@Override
 		public void onProgressUpdate(Bitmap... value) {
 			addImage(value);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
 		@Override
 		protected void onPostExecute(Object result) {
 			setProgressBarIndeterminateVisibility(false);
 		}
 
+		/**
+		 * Simple helper to get full URI
+		 * 
+		 * @param type
+		 *            Uri type
+		 * @param imageID
+		 *            image id in database
+		 * @return full Uri of image
+		 */
 		private Uri getUri(Uri type, int imageID) {
 			return Uri.withAppendedPath(type, "" + imageID);
 		}
-
 	}
 
 	/**
@@ -287,6 +371,11 @@ public class GalleryActivity extends Activity {
 	 */
 	private class UploadImageTask extends AsyncTask<File, Double, Object> {
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#doInBackground(Params[])
+		 */
 		@Override
 		protected Object doInBackground(File... files) {
 			GeosightEntity.uploadImage(files[0], new ProgressCallback() {
@@ -299,6 +388,11 @@ public class GalleryActivity extends Activity {
 			return null;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onProgressUpdate(Progress[])
+		 */
 		@Override
 		public void onProgressUpdate(Double... progress) {
 			for (int i = 0; i < progress.length; i++) {
@@ -306,10 +400,16 @@ public class GalleryActivity extends Activity {
 			}
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
 		@Override
 		protected void onPostExecute(Object result) {
 			GalleryActivity.this.finish();
-			Toast.makeText(GalleryActivity.this, "Upload Complete", Toast.LENGTH_LONG).show();
+			Toast.makeText(GalleryActivity.this, R.string.upload_complete,
+					Toast.LENGTH_LONG).show();
 			mProgress.setVisibility(View.GONE);
 		}
 	}
@@ -328,7 +428,8 @@ public class GalleryActivity extends Activity {
 				null, // WHERE clause; which rows to return (all rows)
 				null, // WHERE clause selection arguments (none)
 				null); // Order-by clause (ascending by name)
-		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		int column_index = cursor
+				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		cursor.moveToFirst();
 		try {
 			rv = cursor.getString(column_index);
@@ -350,21 +451,24 @@ public class GalleryActivity extends Activity {
 	public boolean isGeotagged(String filepath) throws IOException {
 		if (filepath != null) {
 			ExifInterface e = new ExifInterface(filepath);
-			return (e.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null) &&
-					(e.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null);
+			return (e.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null)
+					&& (e.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null);
 		}
 		return false;
 	}
 
 	/**
 	 * Check if the file is in jpeg format
-	 * @param filepath where file is
+	 * 
+	 * @param filepath
+	 *            where file is
 	 * @return true if the filename has .jpeg postfix
 	 */
 	public boolean isJPEG(String filepath) {
 		String filenameArray[] = filepath.split("\\.");
 		String extension = filenameArray[filenameArray.length - 1];
-		return (extension.equalsIgnoreCase("JPEG") || extension.equalsIgnoreCase("JPG"));
+		return (extension.equalsIgnoreCase("JPEG") || extension
+				.equalsIgnoreCase("JPG"));
 	}
 
 }

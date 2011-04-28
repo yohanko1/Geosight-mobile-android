@@ -295,7 +295,9 @@ public class GeosightEntity {
 					+ lineEnd);
 
 			// Responses from the server (code and message)
+			@SuppressWarnings("unused")
 			int serverResponseCode = connection.getResponseCode();
+			@SuppressWarnings("unused")
 			String serverResponseMessage = connection.getResponseMessage();
 
 			Log.v("UPLOAD", "Message: upload complete");

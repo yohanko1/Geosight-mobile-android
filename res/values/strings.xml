@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, GeoSight!</string>
     <string name="app_name">GeoSight</string>
+    <string name="upload_complete">Upload Complete</string>
+    <string name="no_images_avaiable">No images avaiable</string>
+    <string name="please_select_an_image">Please select an image</string>
+    <string name="gps_provider_not_available">GPS Provider not available</string>
+    <string name="picture_was_taken">Picture was taken</string>
+    <string name="picture_was_uploaded">Picture was uploaded</string>
+    <string name="picture_was_not_taken">Picture was not taken</string>
 </resources>
