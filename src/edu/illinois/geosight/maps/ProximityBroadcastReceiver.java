@@ -12,7 +12,9 @@ import android.widget.Toast;
  *
  */
 public class ProximityBroadcastReceiver extends BroadcastReceiver {
-
+	
+	private static final int VIBRATE_TIME = 2000;
+	
 	/**
 	 * Just show the user a simple notification that they are close to a sight
 	 */
@@ -20,7 +22,7 @@ public class ProximityBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Toast.makeText(context, "You are 1km away from your destination!", Toast.LENGTH_LONG).show();
 		Vibrator alertVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-		alertVibrator.vibrate(2000);
+		alertVibrator.vibrate(VIBRATE_TIME);
 	}
 
 }

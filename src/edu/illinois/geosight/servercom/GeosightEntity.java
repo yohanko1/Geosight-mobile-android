@@ -337,8 +337,11 @@ public class GeosightEntity {
 					+ lineEnd);
 
 			// Responses from the server (code and message)
+			// DO NOT REMOVE THESE, they seem to do nothing, but in reality they are
+			// our mechanism for leaving the server connection open!!!
 			@SuppressWarnings("unused")
 			int serverResponseCode = connection.getResponseCode();
+			
 			@SuppressWarnings("unused")
 			String serverResponseMessage = connection.getResponseMessage();
 

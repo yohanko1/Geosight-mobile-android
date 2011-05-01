@@ -1,7 +1,7 @@
 package edu.illinois.geosight.servercom;
 
 /**
- * Exception for Geosight
+ * Exception for Geosight.  Allows runtime exceptions to be handled more elegantly
  * 
  * @author Steven Kabbes
  * @author Yo Han Ko

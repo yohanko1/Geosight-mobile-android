@@ -24,18 +24,25 @@ import edu.illinois.geosight.R;
  *
  */
 public class RemoteImageView extends LinearLayout {
-	protected ProgressBar bar;
-	protected ImageView image;
+	protected ProgressBar mProgressBar;
+	protected ImageView mImageView;
 	
+	/**
+	 * Create a remote image view based off an XML attribute set
+	 * @param context
+	 * @param attrs
+	 */
 	public RemoteImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		bar = new ProgressBar(context);
-		bar.setIndeterminate(true);
+		mProgressBar = new ProgressBar(context);
+		mProgressBar.setIndeterminate(true);
 		
-		image = new ImageView(context, attrs);
-		image.setVisibility(GONE);
-		this.addView(bar);
-		this.addView(image);
+		// pass along all the attributes to the underlying imageView
+		mImageView = new ImageView(context, attrs);
+		
+		mImageView.setVisibility(GONE);
+		this.addView(mProgressBar);
+		this.addView(mImageView);
 	}
 	
 	/**
@@ -45,8 +52,8 @@ public class RemoteImageView extends LinearLayout {
 	 */
 	public void setImageUrl(URL url){
 		if( url != null ){
-			image.setVisibility(GONE);
-			bar.setVisibility(VISIBLE);
+			mImageView.setVisibility(GONE);
+			mProgressBar.setVisibility(VISIBLE);
 			(new DownloadImageTask()).execute(url);
 		}
 	}
@@ -92,13 +99,13 @@ public class RemoteImageView extends LinearLayout {
 	     }
 	     
 	     protected void onPostExecute(Bitmap bmp) {
-	    	 bar.setVisibility(GONE);
-	    	 image.setVisibility(VISIBLE);
+	    	 mProgressBar.setVisibility(GONE);
+	    	 mImageView.setVisibility(VISIBLE);
 	    	 
 	    	 if (bmp == null){
-	    		 image.setImageResource(R.drawable.error_icon);
+	    		 mImageView.setImageResource(R.drawable.error_icon);
 	    	 } else {
-	    		 image.setImageBitmap(bmp);
+	    		 mImageView.setImageBitmap(bmp);
 	    	 }
 	     }
 	 }

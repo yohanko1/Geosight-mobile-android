@@ -21,6 +21,7 @@ import com.google.android.maps.GeoPoint;
  * 
  */
 public class Sight {
+	
 	protected long sight_id;
 	protected long user_id;
 	protected String name;
@@ -73,7 +74,7 @@ public class Sight {
 	 * 
 	 * @return url for random image
 	 */
-	public URL getRandomImageUrl() {
+	public URL getImageUrl() {
 		try {
 			return new URL(thumb);
 		} catch (MalformedURLException e) {

@@ -20,6 +20,7 @@ public class User {
 	protected Date created_at;
 	protected Date updated_at;
 	public static User current = null;
+	protected final static String FETCH_URL_FORMAT  = "/users/%d.json";
 
 	/**
 	 * Constructor
@@ -27,8 +28,7 @@ public class User {
 	 * @throws GeosightException
 	 */
 	public User(long id) throws GeosightException {
-		GeosightEntity user = GeosightEntity.jsonFromGet(String.format(
-				"/users/%d.json", id));
+		GeosightEntity user = GeosightEntity.jsonFromGet(String.format(FETCH_URL_FORMAT, id));
 
 		try {
 			populate(user.getObject(GeosightEntity.JSON_USER));

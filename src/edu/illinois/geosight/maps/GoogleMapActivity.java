@@ -56,6 +56,9 @@ public class GoogleMapActivity extends MapActivity {
 		mLocOverlay.disableCompass();
 	}
 
+	/**
+	 * populate the map with the nearest sights from the server
+	 */
 	private void markNearestSights() {
 		List<Sight> nearSights = null;
 		try {
@@ -69,6 +72,7 @@ public class GoogleMapActivity extends MapActivity {
 			// mark sights on the map
 			Drawable markers = getResources().getDrawable(R.drawable.pinkmarker);
 			mSightMarkers = new LocationOverlay(markers, mMapView);
+			
 			for (Sight s : nearSights) {
 				GeoPoint p = s.getLocation();
 				SightOverlayItem i = new SightOverlayItem(p, s, s.getName(), s.toString());
@@ -78,6 +82,9 @@ public class GoogleMapActivity extends MapActivity {
 		}
 	}
 
+	/**
+	 * Show the user his/her current location as soon as its available
+	 */
 	private void markCurrentLoc() {
 		mLocOverlay.runOnFirstFix(new Runnable() {
 			@Override

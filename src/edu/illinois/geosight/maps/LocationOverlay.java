@@ -33,6 +33,11 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 	private Context mContext;
 	private LocationManager mLocManager;
 
+	/**
+	 * Create a Location overlay with a default marker type on top of the given mapview
+	 * @param defaultMarker the default marker to mark the items with
+	 * @param mapView the mapview on which to overlay 
+	 */
 	public LocationOverlay(Drawable defaultMarker, MapView mapView) {
 		super(boundCenter(defaultMarker), mapView);
 		this.mContext = mapView.getContext();
@@ -103,6 +108,7 @@ public class LocationOverlay extends BalloonItemizedOverlay<OverlayItem> {
 		float latitude = dest.getLatitudeE6() / (float) 1E6;
 		float longitude = dest.getLongitudeE6() / (float) 1E6;
 		
+		// register notifications for the user when he/she gets close
 		Intent alertIntent = new Intent(mContext, ProximityBroadcastReceiver.class);
 		PendingIntent proximityIntent = PendingIntent.getBroadcast(
 				mContext.getApplicationContext(), 0, alertIntent, 0);
